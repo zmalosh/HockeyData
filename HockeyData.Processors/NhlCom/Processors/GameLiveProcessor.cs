@@ -253,7 +253,6 @@ namespace HockeyData.Processors.NhlCom.Processors
 
 		private bool HasUpdates(SkaterBoxscore dbBoxscore, Feeds.GameLiveFeed.ApiSkaterStats apiBoxscore)
 		{
-			return false;
 			return dbBoxscore.IceTimeTotal != ConvertTimeStringToSeconds(apiBoxscore.TimeOnIce)
 				|| dbBoxscore.Shots != apiBoxscore.Shots
 				|| dbBoxscore.Giveaways != apiBoxscore.Giveaways
@@ -277,7 +276,6 @@ namespace HockeyData.Processors.NhlCom.Processors
 
 		private bool HasUpdates(GoalieBoxscore dbBoxscore, Feeds.GameLiveFeed.ApiGoalieStats apiBoxscore)
 		{
-			return false;
 			return dbBoxscore.AssistsScored != apiBoxscore.Assists
 					|| dbBoxscore.Decision != (string.IsNullOrEmpty(apiBoxscore.Decision) ? null : apiBoxscore.Decision)
 					|| dbBoxscore.GoalsAllowed != apiBoxscore.ShotsAgainst - apiBoxscore.Saves
