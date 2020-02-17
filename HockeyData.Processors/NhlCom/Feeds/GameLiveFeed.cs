@@ -486,52 +486,52 @@ namespace HockeyData.Processors.NhlCom.Feeds
 			public string TimeOnIce { get; set; }
 
 			[JsonProperty("assists")]
-			public long Assists { get; set; }
+			public int? Assists { get; set; }
 
 			[JsonProperty("goals")]
-			public long Goals { get; set; }
+			public int? Goals { get; set; }
 
 			[JsonProperty("shots")]
-			public long Shots { get; set; }
+			public int? Shots { get; set; }
 
 			[JsonProperty("hits")]
-			public long Hits { get; set; }
+			public int? Hits { get; set; }
 
 			[JsonProperty("powerPlayGoals")]
-			public long PowerPlayGoals { get; set; }
+			public int? PowerPlayGoals { get; set; }
 
 			[JsonProperty("powerPlayAssists")]
-			public long PowerPlayAssists { get; set; }
+			public int? PowerPlayAssists { get; set; }
 
 			[JsonProperty("penaltyMinutes")]
-			public long PenaltyMinutes { get; set; }
+			public int? PenaltyMinutes { get; set; }
 
 			[JsonProperty("faceOffPct", NullValueHandling = NullValueHandling.Ignore)]
 			public double? FaceOffPct { get; set; }
 
 			[JsonProperty("faceOffWins")]
-			public long FaceOffWins { get; set; }
+			public int? FaceOffWins { get; set; }
 
 			[JsonProperty("faceoffTaken")]
-			public long FaceoffTaken { get; set; }
+			public int? FaceoffTaken { get; set; }
 
 			[JsonProperty("takeaways")]
-			public long Takeaways { get; set; }
+			public int? Takeaways { get; set; }
 
 			[JsonProperty("giveaways")]
-			public long Giveaways { get; set; }
+			public int? Giveaways { get; set; }
 
 			[JsonProperty("shortHandedGoals")]
-			public long ShortHandedGoals { get; set; }
+			public int? ShortHandedGoals { get; set; }
 
 			[JsonProperty("shortHandedAssists")]
-			public long ShortHandedAssists { get; set; }
+			public int? ShortHandedAssists { get; set; }
 
 			[JsonProperty("blocked")]
-			public long Blocked { get; set; }
+			public int? Blocked { get; set; }
 
 			[JsonProperty("plusMinus")]
-			public long PlusMinus { get; set; }
+			public int? PlusMinus { get; set; }
 
 			[JsonProperty("evenTimeOnIce")]
 			public string EvenTimeOnIce { get; set; }
@@ -549,49 +549,49 @@ namespace HockeyData.Processors.NhlCom.Feeds
 			public string TimeOnIce { get; set; }
 
 			[JsonProperty("assists")]
-			public long Assists { get; set; }
+			public int? Assists { get; set; }
 
 			[JsonProperty("goals")]
-			public long Goals { get; set; }
+			public int? Goals { get; set; }
 
 			[JsonProperty("pim")]
-			public long Pim { get; set; }
+			public int? Pim { get; set; }
 
 			[JsonProperty("shots")]
-			public long Shots { get; set; }
+			public int? Shots { get; set; }
 
 			[JsonProperty("saves")]
-			public long Saves { get; set; }
+			public int? Saves { get; set; }
 
 			[JsonProperty("powerPlaySaves")]
-			public long PowerPlaySaves { get; set; }
+			public int? PowerPlaySaves { get; set; }
 
 			[JsonProperty("shortHandedSaves")]
-			public long ShortHandedSaves { get; set; }
+			public int? ShortHandedSaves { get; set; }
 
 			[JsonProperty("evenSaves")]
-			public long EvenSaves { get; set; }
+			public int? EvenSaves { get; set; }
 
 			[JsonProperty("shortHandedShotsAgainst")]
-			public long ShortHandedShotsAgainst { get; set; }
+			public int? ShortHandedShotsAgainst { get; set; }
 
 			[JsonProperty("evenShotsAgainst")]
-			public long EvenShotsAgainst { get; set; }
+			public int? EvenShotsAgainst { get; set; }
 
 			[JsonProperty("powerPlayShotsAgainst")]
-			public long PowerPlayShotsAgainst { get; set; }
+			public int? PowerPlayShotsAgainst { get; set; }
 
 			[JsonProperty("decision")]
 			public string Decision { get; set; }
 
 			[JsonProperty("savePercentage")]
-			public double SavePercentage { get; set; }
+			public double? SavePercentage { get; set; }
 
 			[JsonProperty("powerPlaySavePercentage", NullValueHandling = NullValueHandling.Ignore)]
-			public long? PowerPlaySavePercentage { get; set; }
+			public double? PowerPlaySavePercentage { get; set; }
 
 			[JsonProperty("evenStrengthSavePercentage")]
-			public double EvenStrengthSavePercentage { get; set; }
+			public double? EvenStrengthSavePercentage { get; set; }
 		}
 
 		public class ApiBoxscoreTeamStats
@@ -603,37 +603,37 @@ namespace HockeyData.Processors.NhlCom.Feeds
 		public class ApiTeamStats
 		{
 			[JsonProperty("goals")]
-			public int Goals { get; set; }
+			public int? Goals { get; set; }
 
 			[JsonProperty("pim")]
-			public int Pim { get; set; }
+			public int? Pim { get; set; }
 
 			[JsonProperty("shots")]
-			public int Shots { get; set; }
+			public int? Shots { get; set; }
 
 			[JsonProperty("powerPlayPercentage")]
 			public string PowerPlayPercentage { get; set; }
 
 			[JsonProperty("powerPlayGoals")]
-			public int PowerPlayGoals { get; set; }
+			public int? PowerPlayGoals { get; set; }
 
 			[JsonProperty("powerPlayOpportunities")]
-			public int PowerPlayOpportunities { get; set; }
+			public int? PowerPlayOpportunities { get; set; }
 
 			[JsonProperty("faceOffWinPercentage")]
 			public string FaceOffWinPercentage { get; set; }
 
 			[JsonProperty("blocked")]
-			public int Blocked { get; set; }
+			public int? Blocked { get; set; }
 
 			[JsonProperty("takeaways")]
-			public int Takeaways { get; set; }
+			public int? Takeaways { get; set; }
 
 			[JsonProperty("giveaways")]
-			public int Giveaways { get; set; }
+			public int? Giveaways { get; set; }
 
 			[JsonProperty("hits")]
-			public int Hits { get; set; }
+			public int? Hits { get; set; }
 		}
 
 		public class ApiGameDecisions
