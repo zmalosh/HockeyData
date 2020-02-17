@@ -31,6 +31,7 @@ namespace HockeyData.Model
 		public DbSet<League> Leagues { get; set; }
 		public DbSet<Season> Seasons { get; set; }
 		public DbSet<Team> Teams { get; set; }
+		public DbSet<Player> Players { get; set; }
 		public DbSet<Game> Games { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -78,6 +79,22 @@ namespace HockeyData.Model
 				e.Property(x => x.TeamShortName).HasMaxLength(32).IsRequired(false);
 				e.Property(x => x.TeamAbbr).HasMaxLength(4).IsRequired(false);
 				e.Property(x => x.WebSiteUrl).HasMaxLength(255).IsRequired(false);
+				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
+				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
+			});
+
+			modelBuilder.Entity<Player>(e =>
+			{
+				e.HasKey(x => x.PlayerId);
+				e.Property(x => x.BirthCity).HasMaxLength(128);
+				e.Property(x => x.BirthCountry).HasMaxLength(3);
+				e.Property(x => x.BirthState).HasMaxLength(2).IsRequired(false);
+				e.Property(x => x.FirstName).HasMaxLength(64);
+				e.Property(x => x.FullName).HasMaxLength(128);
+				e.Property(x => x.LastName).HasMaxLength(64);
+				e.Property(x => x.Nationality).HasMaxLength(3);
+				e.Property(x => x.PrimaryPosition).HasMaxLength(2);
+				e.Property(x => x.BirthDate).HasColumnType("date");
 				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
 				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
 			});
