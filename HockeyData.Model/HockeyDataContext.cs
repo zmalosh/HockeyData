@@ -26,12 +26,21 @@ namespace HockeyData.Model
 			optionsBuilder.UseSqlServer(connectionString);
 		}
 
+		public DbSet<RefGameType> RefGameTypes { get; set; }
 		public DbSet<League> Leagues { get; set; }
 		public DbSet<Season> Seasons { get; set; }
 		public DbSet<Team> Teams { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			modelBuilder.Entity<RefGameType>(e =>
+			{
+				e.HasKey(x => x.GameTypeId);
+				e.Property(x => x.GameTypeId).ValueGeneratedNever();
+				e.Property(x => x.NhlGameTypeKey).HasMaxLength(16);
+				e.Property(x => x.GameTypeDescription).HasMaxLength(128);
+			});
+
 			modelBuilder.Entity<League>(e =>
 			{
 				e.HasKey(x => x.LeagueId);
