@@ -37,6 +37,8 @@ namespace HockeyData.Model
 				e.HasKey(x => x.LeagueId);
 				e.Property(x => x.LeagueName).HasMaxLength(64);
 				e.Property(x => x.LeagueAbbr).HasMaxLength(8);
+				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
+				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
 			});
 
 			modelBuilder.Entity<Season>(e =>
@@ -44,6 +46,8 @@ namespace HockeyData.Model
 				e.HasKey(x => x.SeasonId);
 				e.HasOne(x => x.League).WithMany(y => y.Seasons).HasForeignKey(x => x.LeagueId);
 				e.Property(x => x.NhlSeasonKey).HasMaxLength(8);
+				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
+				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
 			});
 
 			modelBuilder.Entity<Team>(e =>
@@ -55,6 +59,8 @@ namespace HockeyData.Model
 				e.Property(x => x.TeamShortName).HasMaxLength(32).IsRequired(false);
 				e.Property(x => x.TeamAlias).HasMaxLength(4).IsRequired(false);
 				e.Property(x => x.WebSiteUrl).HasMaxLength(255).IsRequired(false);
+				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
+				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
 			});
 		}
 
