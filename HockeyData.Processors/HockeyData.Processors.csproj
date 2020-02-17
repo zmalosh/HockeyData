@@ -12,8 +12,4 @@
     <ProjectReference Include="..\HockeyData.Model\HockeyData.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="NhlCom\Processors\" />
-  </ItemGroup>
-
 </Project>
