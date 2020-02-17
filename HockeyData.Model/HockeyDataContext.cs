@@ -109,6 +109,10 @@ namespace HockeyData.Model
 				e.HasOne(x => x.AwayTeam).WithMany(y => y.AwayGames).HasForeignKey(x => x.AwayTeamId).IsRequired(false);
 				e.Property(x => x.HomeCoachName).HasMaxLength(128).IsRequired(false).HasDefaultValue(null);
 				e.Property(x => x.AwayCoachName).HasMaxLength(128).IsRequired(false).HasDefaultValue(null);
+				e.Property(x => x.RefereeName1).HasMaxLength(128).IsRequired(false).HasDefaultValue(null);
+				e.Property(x => x.RefereeName2).HasMaxLength(128).IsRequired(false).HasDefaultValue(null);
+				e.Property(x => x.LinesmanName1).HasMaxLength(128).IsRequired(false).HasDefaultValue(null);
+				e.Property(x => x.LinesmanName2).HasMaxLength(128).IsRequired(false).HasDefaultValue(null);
 				e.Property(x => x.GameDateEst).HasColumnType("date");
 				e.Property(x => x.GameTimeUtc).HasColumnType("datetime");
 				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");

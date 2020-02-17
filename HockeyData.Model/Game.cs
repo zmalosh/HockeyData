@@ -32,6 +32,10 @@ namespace HockeyData.Model
 		public string VenueName { get; set; }
 		public string HomeCoachName { get; set; }
 		public string AwayCoachName { get; set; }
+		public string RefereeName1 { get; set; }
+		public string RefereeName2 { get; set; }
+		public string LinesmanName1 { get; set; }
+		public string LinesmanName2 { get; set; }
 		public DateTime DateLastModifiedUtc { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
 

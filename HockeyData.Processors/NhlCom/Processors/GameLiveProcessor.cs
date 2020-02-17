@@ -29,14 +29,14 @@ namespace HockeyData.Processors.NhlCom.Processors
 				var nhlGamePlayerIds = feed.GameData?.Players?.Select(x => x.Value.Id).Distinct().ToList();
 				var dbGame = dbContext.Games.Single(x => x.NhlGameId == this.NhlGameId);
 
-				bool hasCoachUpdate = false;
+				bool hasNamedEntityUpdate = false;
 				if (feed.LiveData?.Boxscore?.Teams?.Away?.Coaches != null)
 				{
 					var awayCoachName = feed.LiveData.Boxscore.Teams.Away.Coaches.SingleOrDefault(x => x.Position.Code == "HC")?.Person?.FullName;
 					if (awayCoachName != dbGame.AwayCoachName)
 					{
 						dbGame.AwayCoachName = awayCoachName;
-						hasCoachUpdate = true;
+						hasNamedEntityUpdate = true;
 					}
 				}
 				if (feed.LiveData?.Boxscore?.Teams?.Home?.Coaches != null)
@@ -45,10 +45,46 @@ namespace HockeyData.Processors.NhlCom.Processors
 					if (homeCoachName != dbGame.HomeCoachName)
 					{
 						dbGame.HomeCoachName = homeCoachName;
-						hasCoachUpdate = true;
+						hasNamedEntityUpdate = true;
 					}
 				}
-				if (hasCoachUpdate)
+
+				string refereeName1 = null, refereeName2 = null;
+				string linesmanName1 = null, linesmanName2 = null;
+				var apiOfficials = feed.LiveData?.Boxscore?.Officials.ToList();
+				if (apiOfficials != null)
+				{
+					var referees = apiOfficials.Where(x => x.OfficialType == "Referee").ToList();
+					if (referees.Count >= 1) { refereeName1 = referees[0].Official.FullName; }
+					if (referees.Count >= 2) { refereeName2 = referees[1].Official.FullName; }
+					var linesmen = apiOfficials.Where(x => x.OfficialType == "Linesman").ToList();
+					if (linesmen.Count >= 1) { linesmanName1 = linesmen[0].Official.FullName; }
+					if (linesmen.Count >= 2) { linesmanName2 = linesmen[1].Official.FullName; }
+
+					if ((refereeName1 == null && dbGame.RefereeName1 != null) || (refereeName1 != null && dbGame.RefereeName1 != refereeName1))
+					{
+						dbGame.RefereeName1 = refereeName1;
+						hasNamedEntityUpdate = true;
+					}
+					if ((refereeName2 == null && dbGame.RefereeName2 != null) || (refereeName2 != null && dbGame.RefereeName2 != refereeName2))
+					{
+						dbGame.RefereeName2 = refereeName2;
+						hasNamedEntityUpdate = true;
+					}
+
+					if ((linesmanName1 == null && dbGame.LinesmanName1 != null) || (linesmanName1 != null && dbGame.LinesmanName1 != linesmanName1))
+					{
+						dbGame.LinesmanName1 = linesmanName1;
+						hasNamedEntityUpdate = true;
+					}
+					if ((linesmanName2 == null && dbGame.LinesmanName2 != null) || (linesmanName2 != null && dbGame.LinesmanName2 != linesmanName2))
+					{
+						dbGame.LinesmanName2 = linesmanName2;
+						hasNamedEntityUpdate = true;
+					}
+				}
+
+				if (hasNamedEntityUpdate)
 				{
 					dbContext.SaveChanges();
 				}
