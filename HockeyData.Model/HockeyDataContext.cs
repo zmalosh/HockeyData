@@ -94,7 +94,7 @@ namespace HockeyData.Model
 				e.Property(x => x.FullName).HasMaxLength(128);
 				e.Property(x => x.LastName).HasMaxLength(64);
 				e.Property(x => x.Nationality).HasMaxLength(3);
-				e.Property(x => x.PrimaryPosition).HasMaxLength(2);
+				e.Property(x => x.PrimaryPosition).HasMaxLength(3).IsRequired(false);
 				e.Property(x => x.BirthDate).HasColumnType("date");
 				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
 				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
@@ -116,7 +116,7 @@ namespace HockeyData.Model
 				e.HasOne(x => x.Game).WithMany(y => y.PlayerBoxscores).HasForeignKey(x => x.GameId);
 				e.HasOne(x => x.Player).WithMany(y => y.PlayerBoxscores).HasForeignKey(x => x.PlayerId);
 				e.HasOne(x => x.Team).WithMany(y => y.PlayerBoxscores).HasForeignKey(x => x.TeamId);
-				e.Property(x => x.Position).HasMaxLength(2).IsRequired(false);
+				e.Property(x => x.Position).HasMaxLength(3).IsRequired(false);
 			});
 		}
 
