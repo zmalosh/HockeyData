@@ -7,9 +7,14 @@ namespace HockeyData.Processors.NhlCom.Feeds
 {
 	public class TeamsFeed
 	{
-		public static string GetFeedUrl(string nhlSeasonKey)
+		public static string GetFeedUrl(string nhlSeasonKey = null)
 		{
-			return $"https://statsapi.web.nhl.com/api/v1/teams?season={nhlSeasonKey}";
+			string baseUrl = "https://statsapi.web.nhl.com/api/v1/teams";
+			if (string.IsNullOrEmpty(nhlSeasonKey))
+			{
+				return baseUrl;
+			}
+			return $"{baseUrl}?season={nhlSeasonKey}";
 		}
 
 		public static TeamsFeed FromJson(string json) => JsonConvert.DeserializeObject<TeamsFeed>(json, Converter.Settings);

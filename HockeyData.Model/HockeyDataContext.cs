@@ -57,7 +57,7 @@ namespace HockeyData.Model
 				e.Property(x => x.TeamLocation).HasMaxLength(32).IsRequired(false);
 				e.Property(x => x.TeamName).HasMaxLength(32).IsRequired(false);
 				e.Property(x => x.TeamShortName).HasMaxLength(32).IsRequired(false);
-				e.Property(x => x.TeamAlias).HasMaxLength(4).IsRequired(false);
+				e.Property(x => x.TeamAbbr).HasMaxLength(4).IsRequired(false);
 				e.Property(x => x.WebSiteUrl).HasMaxLength(255).IsRequired(false);
 				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
 				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");

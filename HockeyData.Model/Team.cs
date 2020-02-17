@@ -10,7 +10,7 @@ namespace HockeyData.Model
 		public string TeamFullName { get; set; }
 		public string TeamLocation { get; set; }
 		public string TeamName { get; set; }
-		public string TeamAlias { get; set; }
+		public string TeamAbbr { get; set; }
 		public string TeamShortName { get; set; }
 		public int NhlTeamId { get; set; }
 		public int? FirstYearOfPlay { get; set; }

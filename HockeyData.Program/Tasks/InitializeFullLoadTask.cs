@@ -2,6 +2,7 @@
 using HockeyData.Processors.NhlCom.Processors;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace HockeyData.Program.Tasks
@@ -25,6 +26,15 @@ namespace HockeyData.Program.Tasks
 
 				var seasonsProcessor = new SeasonsProcessor();
 				seasonsProcessor.Run(context);
+
+				var dbSeasons = context.Seasons.OrderBy(x => x.SeasonId).ToList();
+				foreach (var dbSeason in dbSeasons)
+				{
+					var nhlSeasonKey = dbSeason.NhlSeasonKey;
+					Console.WriteLine($"PROCESS TEAMS - {nhlSeasonKey}");
+					var teamsProcessor = new TeamsProcessor(nhlSeasonKey);
+					teamsProcessor.Run(context);
+				}
 			}
 		}
 	}
