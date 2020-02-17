@@ -22,8 +22,10 @@ namespace HockeyData.Model
 		public int? Takeaways { get; set; }
 		public int? FaceoffsTaken { get; set; }
 		public int? FaceoffsWon { get; set; }
+		public int? GoalsEV { get; set; }
 		public int? GoalsPP { get; set; }
 		public int? GoalsSH { get; set; }
+		public int? AssistsEV { get; set; }
 		public int? AssistsPP { get; set; }
 		public int? AssistsSH { get; set; }
 		public int? IceTimeTotal { get; set; }

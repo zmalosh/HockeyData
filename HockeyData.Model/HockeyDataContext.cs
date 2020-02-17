@@ -34,6 +34,7 @@ namespace HockeyData.Model
 		public DbSet<Player> Players { get; set; }
 		public DbSet<Game> Games { get; set; }
 		public DbSet<SkaterBoxscore> SkaterBoxscores { get; set; }
+		public DbSet<GoalieBoxscore> GoalieBoxscores { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -108,6 +109,8 @@ namespace HockeyData.Model
 				e.HasOne(x => x.AwayTeam).WithMany(y => y.AwayGames).HasForeignKey(x => x.AwayTeamId).IsRequired(false);
 				e.Property(x => x.GameDateEst).HasColumnType("date");
 				e.Property(x => x.GameTimeUtc).HasColumnType("datetime");
+				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
+				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
 			});
 
 			modelBuilder.Entity<SkaterBoxscore>(e =>
@@ -117,6 +120,19 @@ namespace HockeyData.Model
 				e.HasOne(x => x.Player).WithMany(y => y.PlayerBoxscores).HasForeignKey(x => x.PlayerId);
 				e.HasOne(x => x.Team).WithMany(y => y.PlayerBoxscores).HasForeignKey(x => x.TeamId);
 				e.Property(x => x.Position).HasMaxLength(3).IsRequired(false);
+				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
+				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
+			});
+
+			modelBuilder.Entity<GoalieBoxscore>(e =>
+			{
+				e.HasKey(x => new { x.GameId, x.PlayerId });
+				e.HasOne(x => x.Game).WithMany(y => y.GoalieBoxscores).HasForeignKey(x => x.GameId);
+				e.HasOne(x => x.Player).WithMany(y => y.GoalieBoxscores).HasForeignKey(x => x.PlayerId);
+				e.HasOne(x => x.Team).WithMany(y => y.GoalieBoxscores).HasForeignKey(x => x.TeamId);
+				e.Property(x => x.Decision).HasMaxLength(2).IsRequired(false);
+				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
+				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
 			});
 		}
 

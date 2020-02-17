@@ -558,7 +558,7 @@ namespace HockeyData.Processors.NhlCom.Feeds
 			public int? Pim { get; set; }
 
 			[JsonProperty("shots")]
-			public int? Shots { get; set; }
+			public int? ShotsAgainst { get; set; }
 
 			[JsonProperty("saves")]
 			public int? Saves { get; set; }
@@ -873,10 +873,10 @@ namespace HockeyData.Processors.NhlCom.Feeds
 		public class ApiPlayCoordinates
 		{
 			[JsonProperty("x", NullValueHandling = NullValueHandling.Ignore)]
-			public int? X { get; set; }
+			public decimal? X { get; set; }
 
 			[JsonProperty("y", NullValueHandling = NullValueHandling.Ignore)]
-			public int? Y { get; set; }
+			public decimal? Y { get; set; }
 		}
 
 		public class ApiPlayPlayer

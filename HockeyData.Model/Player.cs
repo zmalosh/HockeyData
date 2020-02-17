@@ -26,5 +26,6 @@ namespace HockeyData.Model
 		public DateTime DateCreatedUtc { get; set; }
 
 		public IList<SkaterBoxscore> PlayerBoxscores { get; set; }
+		public IList<GoalieBoxscore> GoalieBoxscores { get; set; }
 	}
 }

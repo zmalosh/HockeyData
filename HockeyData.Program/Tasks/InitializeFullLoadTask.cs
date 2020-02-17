@@ -60,7 +60,7 @@ namespace HockeyData.Program.Tasks
 				var seasonsProcessor = new SeasonsProcessor();
 				seasonsProcessor.Run(context);
 
-				var dbSeasons = context.Seasons.OrderBy(x => x.SeasonId).ToList();
+				var dbSeasons = context.Seasons.Where(x => x.SeasonId > 100 && x.NhlSeasonKey != "20192020").OrderBy(x => x.SeasonId).ToList();
 				for (int i = 0; i < dbSeasons.Count; i++)
 				{
 					var dbSeason = dbSeasons[i];

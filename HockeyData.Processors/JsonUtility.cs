@@ -38,7 +38,7 @@ namespace HockeyData.Processors
 				{
 					rawJson = WebClient.DownloadString(url);
 				}
-				catch
+				catch (Exception ex)
 				{
 					return null;
 				}
