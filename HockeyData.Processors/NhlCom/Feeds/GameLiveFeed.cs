@@ -7,9 +7,9 @@ namespace HockeyData.Processors.NhlCom.Feeds
 {
 	public class GameLiveFeed
 	{
-		public static string GetFeedUrl(string nhlGameId = null)
+		public static string GetFeedUrl(int nhlGameId)
 		{
-			return $"https://statsapi.web.nhl.com/api/v1/game/{nhlGameId}";
+			return $"https://statsapi.web.nhl.com/api/v1/game/{nhlGameId}/feed/live";
 		}
 
 		public static GameLiveFeed FromJson(string json) => JsonConvert.DeserializeObject<GameLiveFeed>(json, Converter.Settings);
@@ -378,7 +378,7 @@ namespace HockeyData.Processors.NhlCom.Feeds
 			public ApiBoxscoreTeamStats TeamStats { get; set; }
 
 			[JsonProperty("players")]
-			public ApiBoxscorePlayers Players { get; set; }
+			public Dictionary<string, ApiBoxscorePlayer> Players { get; set; }
 
 			[JsonProperty("goalies")]
 			public List<int> Goalies { get; set; }
@@ -432,11 +432,11 @@ namespace HockeyData.Processors.NhlCom.Feeds
 			public int Stamina { get; set; }
 		}
 
-		public class ApiBoxscorePlayers
-		{
-			[JsonExtensionData]
-			public Dictionary<string, ApiBoxscorePlayer> Players { get; set; }
-		}
+		//public class ApiBoxscorePlayers
+		//{
+		//	[JsonExtensionData]
+		//	public Dictionary<string, ApiBoxscorePlayer> Players { get; set; }
+		//}
 
 		public class ApiBoxscorePlayer
 		{
@@ -615,10 +615,10 @@ namespace HockeyData.Processors.NhlCom.Feeds
 			public string PowerPlayPercentage { get; set; }
 
 			[JsonProperty("powerPlayGoals")]
-			public int? PowerPlayGoals { get; set; }
+			public double? PowerPlayGoals { get; set; }
 
 			[JsonProperty("powerPlayOpportunities")]
-			public int? PowerPlayOpportunities { get; set; }
+			public double? PowerPlayOpportunities { get; set; }
 
 			[JsonProperty("faceOffWinPercentage")]
 			public string FaceOffWinPercentage { get; set; }
