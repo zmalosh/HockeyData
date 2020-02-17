@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace HockeyData.Processors.NhlCom.Feeds
@@ -9,7 +10,7 @@ namespace HockeyData.Processors.NhlCom.Feeds
 	{
 		public static string GetFeedUrl(string nhlSeasonKey = null)
 		{
-			string baseUrl = "https://statsapi.web.nhl.com/api/v1/games";
+			string baseUrl = "https://statsapi.web.nhl.com/api/v1/schedule";
 			if (string.IsNullOrEmpty(nhlSeasonKey))
 			{
 				return baseUrl;
@@ -85,7 +86,7 @@ namespace HockeyData.Processors.NhlCom.Feeds
 			public ApiTeams Teams { get; set; }
 
 			[JsonProperty("venue")]
-			public Venue Venue { get; set; }
+			public ApiSimpleEntity Venue { get; set; }
 
 			[JsonProperty("content")]
 			public ApiContent Content { get; set; }
@@ -133,7 +134,7 @@ namespace HockeyData.Processors.NhlCom.Feeds
 			public int Score { get; set; }
 
 			[JsonProperty("team")]
-			public Venue Team { get; set; }
+			public ApiSimpleEntity Team { get; set; }
 		}
 
 		public class ApiLeagueRecord
@@ -154,7 +155,7 @@ namespace HockeyData.Processors.NhlCom.Feeds
 			public string Type { get; set; }
 		}
 
-		public class Venue
+		public class ApiSimpleEntity : IEquatable<ApiSimpleEntity>
 		{
 			[JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
 			public int? Id { get; set; }
@@ -164,6 +165,15 @@ namespace HockeyData.Processors.NhlCom.Feeds
 
 			[JsonProperty("link")]
 			public string Link { get; set; }
+
+			public bool Equals([AllowNull] ApiSimpleEntity other)
+			{
+				if (other == null)
+				{
+					return false;
+				}
+				return this.Id == other.Id;
+			}
 		}
 	}
 

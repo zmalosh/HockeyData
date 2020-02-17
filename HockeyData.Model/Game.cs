@@ -17,10 +17,12 @@ namespace HockeyData.Model
 		public int? AwayScore { get; set; }
 		public int? NhlVenueId { get; set; }
 		public int NhlGameId { get; set; }
+		public int? HomeGamesPlayed { get; set; }
 		public int? HomeWins { get; set; }
 		public int? HomeLosses { get; set; }
 		public int? HomeTies { get; set; }
 		public int? HomeOvertimes { get; set; }
+		public int? AwayGamesPlayed { get; set; }
 		public int? AwayWins { get; set; }
 		public int? AwayLosses { get; set; }
 		public int? AwayTies { get; set; }

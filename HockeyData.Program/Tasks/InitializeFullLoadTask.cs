@@ -12,11 +12,14 @@ namespace HockeyData.Program.Tasks
 		public override void Run()
 		{
 			Console.WriteLine("Hello World!");
+			HockeyDataContext context = null;
 
-			var config = GetConfig();
-
-			using (var context = new HockeyDataContext(config))
+			try
 			{
+				var config = GetConfig();
+
+				context = new HockeyDataContext(config);
+
 				context.Database.EnsureDeleted();
 				context.Database.EnsureCreated();
 				context.SaveChanges();
@@ -58,12 +61,30 @@ namespace HockeyData.Program.Tasks
 				seasonsProcessor.Run(context);
 
 				var dbSeasons = context.Seasons.OrderBy(x => x.SeasonId).ToList();
-				foreach (var dbSeason in dbSeasons)
+				for (int i = 0; i < dbSeasons.Count; i++)
 				{
+					var dbSeason = dbSeasons[i];
 					var nhlSeasonKey = dbSeason.NhlSeasonKey;
 					Console.WriteLine($"PROCESS TEAMS - {nhlSeasonKey}");
 					var teamsProcessor = new TeamsProcessor(nhlSeasonKey);
 					teamsProcessor.Run(context);
+
+					Console.WriteLine($"PROCESS GAMES - {nhlSeasonKey}");
+					var gamesProcessor = new GamesProcessor(nhlSeasonKey);
+					gamesProcessor.Run(context);
+
+					if (i % 10 == 9)
+					{
+						context.Dispose();
+						context = new HockeyDataContext(config);
+					}
+				}
+			}
+			finally
+			{
+				if (context != null)
+				{
+					context.Dispose();
 				}
 			}
 		}
