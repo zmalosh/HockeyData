@@ -29,6 +29,30 @@ namespace HockeyData.Processors.NhlCom.Processors
 				var nhlGamePlayerIds = feed.GameData?.Players?.Select(x => x.Value.Id).Distinct().ToList();
 				var dbGame = dbContext.Games.Single(x => x.NhlGameId == this.NhlGameId);
 
+				bool hasCoachUpdate = false;
+				if (feed.LiveData?.Boxscore?.Teams?.Away?.Coaches != null)
+				{
+					var awayCoachName = feed.LiveData.Boxscore.Teams.Away.Coaches.SingleOrDefault(x => x.Position.Code == "HC")?.Person?.FullName;
+					if (awayCoachName != dbGame.AwayCoachName)
+					{
+						dbGame.AwayCoachName = awayCoachName;
+						hasCoachUpdate = true;
+					}
+				}
+				if (feed.LiveData?.Boxscore?.Teams?.Home?.Coaches != null)
+				{
+					var homeCoachName = feed.LiveData.Boxscore.Teams.Home.Coaches.SingleOrDefault(x => x.Position.Code == "HC")?.Person?.FullName;
+					if (homeCoachName != dbGame.HomeCoachName)
+					{
+						dbGame.HomeCoachName = homeCoachName;
+						hasCoachUpdate = true;
+					}
+				}
+				if (hasCoachUpdate)
+				{
+					dbContext.SaveChanges();
+				}
+
 				bool isGameStarted = dbGame.GameStatusId == GameStatus.Live || dbGame.GameStatusId == GameStatus.Final;
 				bool feedHasPlayers = nhlGamePlayerIds != null && nhlGamePlayerIds.Count > 0;
 				if (isGameStarted && feedHasPlayers)

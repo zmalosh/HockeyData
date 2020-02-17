@@ -30,6 +30,8 @@ namespace HockeyData.Model
 		public DateTime GameTimeUtc { get; set; }
 		public DetailedGameStatus DetailedGameStatusId { get; set; }
 		public string VenueName { get; set; }
+		public string HomeCoachName { get; set; }
+		public string AwayCoachName { get; set; }
 		public DateTime DateLastModifiedUtc { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
 
