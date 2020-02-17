@@ -8,17 +8,19 @@ namespace HockeyData.Processors.NhlCom.Processors
 {
 	public class TeamsProcessor : IProcessor
 	{
-		private readonly string nhlSeasonKey;
+		private readonly string NhlSeasonKey;
+		private readonly JsonUtility JsonUtility;
 
 		public TeamsProcessor(string nhlSeasonKey = null)
 		{
-			this.nhlSeasonKey = nhlSeasonKey;
+			this.NhlSeasonKey = nhlSeasonKey;
+			this.JsonUtility = new JsonUtility(7 * 24 * 60 * 60);
 		}
 
 		public void Run(HockeyDataContext dbContext)
 		{
-			var url = Feeds.TeamsFeed.GetFeedUrl(this.nhlSeasonKey);
-			var rawJson = JsonUtility.GetRawJsonFromUrl(url);
+			var url = Feeds.TeamsFeed.GetFeedUrl(this.NhlSeasonKey);
+			var rawJson = this.JsonUtility.GetRawJsonFromUrl(url);
 			var feed = Feeds.TeamsFeed.FromJson(rawJson);
 
 			var teamsDict = dbContext.Teams.ToDictionary(x => x.NhlTeamId, y => y);

@@ -8,27 +8,29 @@ namespace HockeyData.Processors.NhlCom.Processors
 {
 	public class GamesProcessor : IProcessor
 	{
-		private readonly string nhlSeasonKey;
+		private readonly string NhlSeasonKey;
+		private readonly JsonUtility JsonUtility;
 
 		public GamesProcessor(string nhlSeasonKey = null)
 		{
-			this.nhlSeasonKey = nhlSeasonKey;
+			this.NhlSeasonKey = nhlSeasonKey;
+			this.JsonUtility = new JsonUtility(7 * 24 * 60 * 60);
 		}
 
 		public void Run(HockeyDataContext dbContext)
 		{
-			var url = Feeds.GamesFeed.GetFeedUrl(this.nhlSeasonKey);
-			var rawJson = JsonUtility.GetRawJsonFromUrl(url);
+			var url = Feeds.GamesFeed.GetFeedUrl(this.NhlSeasonKey);
+			var rawJson = this.JsonUtility.GetRawJsonFromUrl(url);
 			var feed = Feeds.GamesFeed.FromJson(rawJson);
 
 			int dbSeasonId;
-			if (this.nhlSeasonKey == null)
+			if (this.NhlSeasonKey == null)
 			{
 				dbSeasonId = dbContext.Seasons.OrderByDescending(x => x.NhlSeasonKey).First().SeasonId;
 			}
 			else
 			{
-				dbSeasonId = dbContext.Seasons.Single(x => x.NhlSeasonKey == this.nhlSeasonKey).SeasonId;
+				dbSeasonId = dbContext.Seasons.Single(x => x.NhlSeasonKey == this.NhlSeasonKey).SeasonId;
 			}
 
 			var teamsDict = dbContext.Teams.ToDictionary(x => x.NhlTeamId, y => y);
@@ -52,7 +54,7 @@ namespace HockeyData.Processors.NhlCom.Processors
 			var gameTypesDict = dbContext.RefGameTypes.ToDictionary(x => x.NhlGameTypeKey, y => y.GameTypeId);
 			var gameStatusesDict = dbContext.RefGameStatuses.ToDictionary(x => x.NhlStatusCode, y => y.GameStatusId);
 			var detailedGameStatusesDict = dbContext.RefGameStatuses.ToDictionary(x => x.NhlStatusCode, y => y.DetailedGameStatusId);
-			var gamesDict = dbContext.Games.Where(x => nhlSeasonKey == null || x.Season.NhlSeasonKey == this.nhlSeasonKey).ToDictionary(x => x.NhlGameId, y => y);
+			var gamesDict = dbContext.Games.Where(x => NhlSeasonKey == null || x.Season.NhlSeasonKey == this.NhlSeasonKey).ToDictionary(x => x.NhlGameId, y => y);
 
 			var apiGames = feed.Dates.SelectMany(x => x.Games).OrderBy(x => x.GameDate).ToList();
 

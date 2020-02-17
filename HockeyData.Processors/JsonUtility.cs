@@ -1,18 +1,61 @@
-﻿using System;
+﻿using HockeyData.Processors.ICacheUtilities;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
 
 namespace HockeyData.Processors
 {
-	public static class JsonUtility
+	public class JsonUtility
 	{
 		private static readonly WebClient WebClient = CreateWebClient();
+		private const string AzureContainerName = "cache";
 
-		public static string GetRawJsonFromUrl(string url)
+		private readonly ICacheUtility CacheUtility;
+		private readonly int? CacheTimeSeconds;
+
+		public JsonUtility(int? cacheTimeSeconds = null)
 		{
-			var rawJson = WebClient.DownloadString(url);
+			this.CacheTimeSeconds = cacheTimeSeconds;
+			if (!cacheTimeSeconds.HasValue)
+			{
+				this.CacheUtility = new NoCacheUtility();
+			}
+			else
+			{
+				this.CacheUtility = new AzureUtility(AzureContainerName);
+			}
+		}
+
+		public string GetRawJsonFromUrl(string url)
+		{
+			string cachePath = GetCachePathFromUrl(url);
+
+			if (!this.CacheTimeSeconds.HasValue || !CacheUtility.ReadFile(cachePath, out string rawJson, this.CacheTimeSeconds))
+			{
+				try
+				{
+					rawJson = WebClient.DownloadString(url);
+				}
+				catch
+				{
+					return null;
+				}
+				if (!this.CacheTimeSeconds.HasValue || (this.CacheTimeSeconds.HasValue && this.CacheTimeSeconds.Value > 0))
+				{
+					CacheUtility.WriteFile(cachePath, rawJson);
+				}
+			}
+
 			return rawJson;
+		}
+
+		private static string GetCachePathFromUrl(string url)
+		{
+			var rawPath = url.Split(".com/")[1];
+			var path = rawPath.Replace("/", "_").Replace("?", "_");
+			return path;
 		}
 
 		private static WebClient CreateWebClient()

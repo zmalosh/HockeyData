@@ -3,11 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HockeyData.Program", "HockeyData.Program\HockeyData.Program.csproj", "{C3AD361D-B055-4BAB-BA30-A2D7C0A9B73E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HockeyData.Program", "HockeyData.Program\HockeyData.Program.csproj", "{C3AD361D-B055-4BAB-BA30-A2D7C0A9B73E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HockeyData.Model", "HockeyData.Model\HockeyData.Model.csproj", "{F6061664-3F19-4588-850C-1E8F17C311D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HockeyData.Model", "HockeyData.Model\HockeyData.Model.csproj", "{F6061664-3F19-4588-850C-1E8F17C311D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HockeyData.Processors", "HockeyData.Processors\HockeyData.Processors.csproj", "{3A90FACE-B13F-4B92-AB97-1020C88D2226}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HockeyData.Processors", "HockeyData.Processors\HockeyData.Processors.csproj", "{3A90FACE-B13F-4B92-AB97-1020C88D2226}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{463F4E89-C6D7-412B-93BA-E058E9163AE5}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
