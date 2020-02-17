@@ -26,8 +26,20 @@ namespace HockeyData.Model
 			optionsBuilder.UseSqlServer(connectionString);
 		}
 
+		public DbSet<Team> Teams { get; set; }
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			modelBuilder.Entity<Team>(e =>
+			{
+				e.HasKey(x => x.TeamId);
+				e.Property(x => x.TeamFullName).HasMaxLength(64);
+				e.Property(x => x.TeamLocation).HasMaxLength(32);
+				e.Property(x => x.TeamName).HasMaxLength(32);
+				e.Property(x => x.TeamShortName).HasMaxLength(32);
+				e.Property(x => x.TeamAlias).HasMaxLength(4);
+				e.Property(x => x.WebSiteUrl).HasMaxLength(255);
+			});
 		}
 
 		void OnEntityTracked(object sender, EntityTrackedEventArgs e)
