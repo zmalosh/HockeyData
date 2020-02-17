@@ -31,6 +31,7 @@ namespace HockeyData.Model
 		public DbSet<League> Leagues { get; set; }
 		public DbSet<Season> Seasons { get; set; }
 		public DbSet<Team> Teams { get; set; }
+		public DbSet<Game> Games { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -79,6 +80,15 @@ namespace HockeyData.Model
 				e.Property(x => x.WebSiteUrl).HasMaxLength(255).IsRequired(false);
 				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
 				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
+			});
+
+			modelBuilder.Entity<Game>(e =>
+			{
+				e.HasKey(x => x.GameId);
+				e.HasOne(x => x.HomeTeam).WithMany(y => y.HomeGames).HasForeignKey(x => x.HomeTeamId).IsRequired(false);
+				e.HasOne(x => x.AwayTeam).WithMany(y => y.AwayGames).HasForeignKey(x => x.AwayTeamId).IsRequired(false);
+				e.Property(x => x.GameDateEst).HasColumnType("date");
+				e.Property(x => x.GameTimeUtc).HasColumnType("datetime");
 			});
 		}
 
