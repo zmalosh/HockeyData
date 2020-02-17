@@ -37,6 +37,20 @@ namespace HockeyData.Program.Tasks
 				});
 				context.SaveChanges();
 
+				context.RefGameStatuses.AddRange(new List<RefGameStatus>
+				{
+					new RefGameStatus{ DetailedGameStatusId = DetailedGameStatus.Scheduled, GameStatusId = GameStatus.Pregame, NhlStatusCode = 01, GameStatusName = "Pregame", DetailedGameStatusName = "Scheduled"},
+					new RefGameStatus{ DetailedGameStatusId = DetailedGameStatus.Pregame, GameStatusId = GameStatus.Pregame, NhlStatusCode = 02, GameStatusName = "Pregame", DetailedGameStatusName = "Pregame"},
+					new RefGameStatus{ DetailedGameStatusId = DetailedGameStatus.InProgress, GameStatusId = GameStatus.Live, NhlStatusCode = 03, GameStatusName = "Live", DetailedGameStatusName = "In-Progress"},
+					new RefGameStatus{ DetailedGameStatusId = DetailedGameStatus.InProgressCritical, GameStatusId = GameStatus.Live, NhlStatusCode = 04, GameStatusName = "Live", DetailedGameStatusName = "In-Progress - Critical"},
+					new RefGameStatus{ DetailedGameStatusId = DetailedGameStatus.GameOver, GameStatusId = GameStatus.Final, NhlStatusCode = 05, GameStatusName = "Final", DetailedGameStatusName = "Game Over"},
+					new RefGameStatus{ DetailedGameStatusId = DetailedGameStatus.Final, GameStatusId = GameStatus.Final, NhlStatusCode = 06, GameStatusName = "Final", DetailedGameStatusName = "Final"},
+					new RefGameStatus{ DetailedGameStatusId = DetailedGameStatus.Final2, GameStatusId = GameStatus.Final, NhlStatusCode = 07, GameStatusName = "Final", DetailedGameStatusName = "Final"},
+					new RefGameStatus{ DetailedGameStatusId = DetailedGameStatus.ScheduledTbd, GameStatusId = GameStatus.Pregame, NhlStatusCode = 08, GameStatusName = "Pregame", DetailedGameStatusName = "Scheduled (Time TBD)"},
+					new RefGameStatus{ DetailedGameStatusId = DetailedGameStatus.Postponed, GameStatusId = GameStatus.Postponed, NhlStatusCode = 09, GameStatusName = "Postponed", DetailedGameStatusName = "Postponed"},
+				});
+				context.SaveChanges();
+
 				context.Leagues.Add(new League { LeagueName = "National Hockey League", LeagueAbbr = "NHL" });
 				context.SaveChanges();
 

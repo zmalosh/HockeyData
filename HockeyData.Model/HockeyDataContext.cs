@@ -27,6 +27,7 @@ namespace HockeyData.Model
 		}
 
 		public DbSet<RefGameType> RefGameTypes { get; set; }
+		public DbSet<RefGameStatus> RefGameStatuses { get; set; }
 		public DbSet<League> Leagues { get; set; }
 		public DbSet<Season> Seasons { get; set; }
 		public DbSet<Team> Teams { get; set; }
@@ -39,6 +40,14 @@ namespace HockeyData.Model
 				e.Property(x => x.GameTypeId).ValueGeneratedNever();
 				e.Property(x => x.NhlGameTypeKey).HasMaxLength(16);
 				e.Property(x => x.GameTypeDescription).HasMaxLength(128);
+			});
+
+			modelBuilder.Entity<RefGameStatus>(e =>
+			{
+				e.HasKey(x => x.DetailedGameStatusId);
+				e.Property(x => x.DetailedGameStatusId).ValueGeneratedNever();
+				e.Property(x => x.GameStatusName).HasMaxLength(16);
+				e.Property(x => x.DetailedGameStatusName).HasMaxLength(64);
 			});
 
 			modelBuilder.Entity<League>(e =>
