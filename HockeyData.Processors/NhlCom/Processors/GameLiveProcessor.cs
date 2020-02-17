@@ -171,6 +171,7 @@ namespace HockeyData.Processors.NhlCom.Processors
 						thirdStarNhlPlayerId = feed.LiveData.Decisions.ThirdStar.Id;
 					}
 
+					bool hasPlayerBoxscoreUpdate = false;
 					if (feed.LiveData.Boxscore?.Teams?.Away?.Players != null && feed.LiveData.Boxscore.Teams.Home.Players != null)
 					{
 						var apiPlayerBoxscores = feed.LiveData.Boxscore.Teams.Away.Players.Select(x => new { DbTeamId = dbAwayTeamId, Box = x.Value }).ToList();
@@ -238,6 +239,7 @@ namespace HockeyData.Processors.NhlCom.Processors
 									};
 									dbSkaterBoxscoreDict.Add(dbPlayerId, dbSkaterBoxscore);
 									dbContext.SkaterBoxscores.Add(dbSkaterBoxscore);
+									hasPlayerBoxscoreUpdate = true;
 								}
 								else if (HasUpdates(dbSkaterBoxscore, apiSkaterStats, starNumber))
 								{
@@ -263,6 +265,7 @@ namespace HockeyData.Processors.NhlCom.Processors
 									dbSkaterBoxscore.Shots = apiSkaterStats.Shots;
 									dbSkaterBoxscore.Takeaways = apiSkaterStats.Takeaways;
 									dbSkaterBoxscore.StarNumber = starNumber;
+									hasPlayerBoxscoreUpdate = true;
 								}
 							}
 
@@ -307,6 +310,7 @@ namespace HockeyData.Processors.NhlCom.Processors
 									};
 									dbGoalieBoxscoreDict.Add(dbPlayerId, dbGoalieBoxscore);
 									dbContext.GoalieBoxscores.Add(dbGoalieBoxscore);
+									hasPlayerBoxscoreUpdate = true;
 								}
 								else if (HasUpdates(dbGoalieBoxscore, apiGoalieStats, starNumber))
 								{
@@ -329,11 +333,117 @@ namespace HockeyData.Processors.NhlCom.Processors
 									dbGoalieBoxscore.ShotsSH = apiGoalieStats.ShortHandedShotsAgainst;
 									dbGoalieBoxscore.TimeOnIce = ConvertTimeStringToSeconds(apiGoalieStats.TimeOnIce);
 									dbGoalieBoxscore.StarNumber = starNumber;
+									hasPlayerBoxscoreUpdate = true;
 								}
 							}
 						}
 
-						dbContext.SaveChanges();
+						#region TEAM BOXSCORES
+						bool hasTeamBoxscoreUpdate = false;
+						var dbTeamBoxscores = dbContext.TeamBoxscores.Where(x => x.GameId == dbGameId).ToList();
+						var apiTeamBoxscoreTeams = new[] { feed.LiveData.Boxscore.Teams.Away, feed.LiveData.Boxscore.Teams.Home };
+						foreach (var apiTeamBoxscoreTeam in apiTeamBoxscoreTeams)
+						{
+							var apiTeamBoxscore = apiTeamBoxscoreTeam.TeamStats.TeamSkaterStats;
+							var isHome = feed.GameData.Teams.Home.Id == apiTeamBoxscoreTeam.Team.Id;
+							var dbTeamId = isHome ? dbHomeTeamId : dbAwayTeamId;
+							var dbOppTeamId = isHome ? dbAwayTeamId : dbHomeTeamId;
+							var dbTeamBox = dbTeamBoxscores.SingleOrDefault(x => x.TeamId == dbTeamId);
+							var dbOppTeamBox = dbTeamBoxscores.SingleOrDefault(x => x.TeamId == dbOppTeamId);
+
+							int? faceoffsTaken = apiTeamBoxscoreTeam.Players?.Values.Sum(x => x.Stats?.SkaterStats?.FaceoffTaken);
+							int? faceoffsWon = apiTeamBoxscoreTeam.Players?.Values.Sum(x => x.Stats?.SkaterStats?.FaceOffWins);
+							int? iceTimeEV = apiTeamBoxscoreTeam.Players?.Values.Sum(x => ConvertTimeStringToSeconds(x.Stats?.SkaterStats?.EvenTimeOnIce));
+							int? iceTimePP = apiTeamBoxscoreTeam.Players?.Values.Sum(x => ConvertTimeStringToSeconds(x.Stats?.SkaterStats?.PowerPlayTimeOnIce));
+							int? iceTimeSH = apiTeamBoxscoreTeam.Players?.Values.Sum(x => ConvertTimeStringToSeconds(x.Stats?.SkaterStats?.ShortHandedTimeOnIce));
+							int? iceTimeTotal = apiTeamBoxscoreTeam.Players?.Values.Sum(x => ConvertTimeStringToSeconds(x.Stats?.SkaterStats?.TimeOnIce));
+							int? goalsPP = apiTeamBoxscoreTeam.Players?.Values.Sum(x => x.Stats?.SkaterStats?.PowerPlayGoals);
+							int? goalsEV = apiTeamBoxscoreTeam.Players?.Values.Sum(x => x.Stats?.SkaterStats?.ShortHandedGoals);
+							int? goalsSH = apiTeamBoxscoreTeam.Players?.Values.Sum(x =>
+							{
+								var apiSkaterStats = x.Stats?.SkaterStats;
+								if (apiSkaterStats?.Goals == null || !apiSkaterStats.PowerPlayGoals.HasValue || !apiSkaterStats.ShortHandedGoals.HasValue)
+								{
+									return null;
+								}
+								return apiSkaterStats.Goals - apiSkaterStats.PowerPlayGoals - apiSkaterStats.ShortHandedGoals;
+							});
+
+							if (dbTeamBox == null)
+							{
+								dbTeamBox = new TeamBoxscore
+								{
+									GameId = dbGameId,
+									TeamId = dbTeamId,
+									OppTeamId = dbOppTeamId,
+									IsHome = isHome,
+									FaceoffsTaken = faceoffsTaken,
+									FaceoffsWon = faceoffsWon,
+									Giveaways = apiTeamBoxscore.Giveaways,
+									Goals = apiTeamBoxscore.Goals,
+									GoalsPP = goalsPP,
+									GoalsSH = goalsEV,
+									GoalsEV = goalsSH,
+									Hits = apiTeamBoxscore.Hits,
+									IceTimeEV = iceTimeEV,
+									IceTimePP = iceTimePP,
+									IceTimeSH = iceTimeSH,
+									IceTimeTotal = iceTimeTotal,
+									OppShotsBlocked = apiTeamBoxscore.Blocked,
+									PenaltyMinutes = apiTeamBoxscore.Pim,
+									PowerPlayOpps = (int?)apiTeamBoxscore.PowerPlayOpportunities,
+									Shots = apiTeamBoxscore.Shots,
+									Takeaways = apiTeamBoxscore.Takeaways
+								};
+								dbContext.TeamBoxscores.Add(dbTeamBox);
+								dbTeamBoxscores.Add(dbTeamBox);
+								hasTeamBoxscoreUpdate = true;
+							}
+							else if (dbTeamBox.FaceoffsTaken != faceoffsTaken
+										|| dbTeamBox.FaceoffsWon != faceoffsWon
+										|| dbTeamBox.Giveaways != apiTeamBoxscore.Giveaways
+										|| dbTeamBox.Goals != apiTeamBoxscore.Goals
+										|| dbTeamBox.GoalsPP != goalsPP
+										|| dbTeamBox.GoalsSH != goalsEV
+										|| dbTeamBox.GoalsEV != goalsSH
+										|| dbTeamBox.Hits != apiTeamBoxscore.Hits
+										|| dbTeamBox.IceTimeEV != iceTimeEV
+										|| dbTeamBox.IceTimePP != iceTimePP
+										|| dbTeamBox.IceTimeSH != iceTimeSH
+										|| dbTeamBox.IceTimeTotal != iceTimeTotal
+										|| dbTeamBox.OppShotsBlocked != apiTeamBoxscore.Blocked
+										|| dbTeamBox.PenaltyMinutes != apiTeamBoxscore.Pim
+										|| dbTeamBox.PowerPlayOpps != (int?)apiTeamBoxscore.PowerPlayOpportunities
+										|| dbTeamBox.Shots != apiTeamBoxscore.Shots
+										|| dbTeamBox.Takeaways != apiTeamBoxscore.Takeaways
+								)
+							{
+								dbTeamBox.FaceoffsTaken = faceoffsTaken;
+								dbTeamBox.FaceoffsWon = faceoffsWon;
+								dbTeamBox.Giveaways = apiTeamBoxscore.Giveaways;
+								dbTeamBox.Goals = apiTeamBoxscore.Goals;
+								dbTeamBox.GoalsPP = goalsPP;
+								dbTeamBox.GoalsSH = goalsEV;
+								dbTeamBox.GoalsEV = goalsSH;
+								dbTeamBox.Hits = apiTeamBoxscore.Hits;
+								dbTeamBox.IceTimeEV = iceTimeEV;
+								dbTeamBox.IceTimePP = iceTimePP;
+								dbTeamBox.IceTimeSH = iceTimeSH;
+								dbTeamBox.IceTimeTotal = iceTimeTotal;
+								dbTeamBox.OppShotsBlocked = apiTeamBoxscore.Blocked;
+								dbTeamBox.PenaltyMinutes = apiTeamBoxscore.Pim;
+								dbTeamBox.PowerPlayOpps = (int?)apiTeamBoxscore.PowerPlayOpportunities;
+								dbTeamBox.Shots = apiTeamBoxscore.Shots;
+								dbTeamBox.Takeaways = apiTeamBoxscore.Takeaways;
+								hasTeamBoxscoreUpdate = true;
+							}
+						}
+						#endregion TEAM BOXSCORES
+
+						if (hasPlayerBoxscoreUpdate || hasTeamBoxscoreUpdate)
+						{
+							dbContext.SaveChanges();
+						}
 					}
 				}
 			}

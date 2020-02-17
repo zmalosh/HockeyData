@@ -35,6 +35,7 @@ namespace HockeyData.Model
 		public DbSet<Game> Games { get; set; }
 		public DbSet<SkaterBoxscore> SkaterBoxscores { get; set; }
 		public DbSet<GoalieBoxscore> GoalieBoxscores { get; set; }
+		public DbSet<TeamBoxscore> TeamBoxscores { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -139,6 +140,14 @@ namespace HockeyData.Model
 				e.Property(x => x.Decision).HasMaxLength(2).IsRequired(false);
 				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
 				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
+			});
+
+			modelBuilder.Entity<TeamBoxscore>(e =>
+			{
+				e.HasKey(x => new { x.GameId, x.TeamId });
+				e.HasOne(x => x.Team).WithMany(y => y.TeamBoxscores).HasForeignKey(x => x.TeamId).OnDelete(DeleteBehavior.Restrict);
+				e.HasOne(x => x.OppTeam).WithMany(y => y.OppTeamBoxscores).HasForeignKey(x => x.OppTeamId).OnDelete(DeleteBehavior.Restrict);
+				e.HasOne(x => x.Game).WithMany(y => y.TeamBoxscores).HasForeignKey(x => x.GameId).OnDelete(DeleteBehavior.Restrict);
 			});
 		}
 

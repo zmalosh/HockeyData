@@ -43,6 +43,7 @@ namespace HockeyData.Model
 		public virtual Team HomeTeam { get; set; }
 		public virtual Team AwayTeam { get; set; }
 		public virtual IList<SkaterBoxscore> PlayerBoxscores { get; set; }
-		public IList<GoalieBoxscore> GoalieBoxscores { get; set; }
+		public virtual IList<GoalieBoxscore> GoalieBoxscores { get; set; }
+		public virtual IList<TeamBoxscore> TeamBoxscores { get; set; }
 	}
 }
