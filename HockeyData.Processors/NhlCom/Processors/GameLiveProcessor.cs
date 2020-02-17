@@ -73,7 +73,6 @@ namespace HockeyData.Processors.NhlCom.Processors
 
 						if (!playersDict.TryGetValue(apiPlayer.Id, out Player dbPlayer))
 						{
-
 							dbPlayer = new Player
 							{
 								BirthCity = apiPlayer.BirthCity,
@@ -123,6 +122,19 @@ namespace HockeyData.Processors.NhlCom.Processors
 					int dbHomeTeamId = dbGame.HomeTeamId.Value;
 					int dbAwayTeamId = dbGame.AwayTeamId.Value;
 
+					bool enableStarAwards = feed.LiveData?.Decisions?.FirstStar != null
+											&& feed.LiveData.Decisions.SecondStar != null
+											&& feed.LiveData.Decisions.ThirdStar != null;
+					int? firstStarNhlPlayerId = null;
+					int? secondStarNhlPlayerId = null;
+					int? thirdStarNhlPlayerId = null;
+					if (enableStarAwards)
+					{
+						firstStarNhlPlayerId = feed.LiveData.Decisions.FirstStar.Id;
+						secondStarNhlPlayerId = feed.LiveData.Decisions.SecondStar.Id;
+						thirdStarNhlPlayerId = feed.LiveData.Decisions.ThirdStar.Id;
+					}
+
 					if (feed.LiveData.Boxscore?.Teams?.Away?.Players != null && feed.LiveData.Boxscore.Teams.Home.Players != null)
 					{
 						var apiPlayerBoxscores = feed.LiveData.Boxscore.Teams.Away.Players.Select(x => new { DbTeamId = dbAwayTeamId, Box = x.Value }).ToList();
@@ -133,8 +145,20 @@ namespace HockeyData.Processors.NhlCom.Processors
 
 						foreach (var apiPlayerBoxscore in apiPlayerBoxscores)
 						{
+
 							var dbPlayer = playersDict[apiPlayerBoxscore.Box.Person.Id];
 							int dbPlayerId = dbPlayer.PlayerId;
+
+							int? starNumber = enableStarAwards
+												? firstStarNhlPlayerId.HasValue && firstStarNhlPlayerId == dbPlayer.NhlPlayerId
+													? 1
+													: secondStarNhlPlayerId.HasValue && secondStarNhlPlayerId == dbPlayer.NhlPlayerId
+														? 2
+														: thirdStarNhlPlayerId.HasValue && thirdStarNhlPlayerId == dbPlayer.NhlPlayerId
+															? 3
+															: 0
+												: (int?)null;
+
 							if (apiPlayerBoxscore.Box?.Stats?.SkaterStats != null)
 							{
 								var apiSkaterStats = apiPlayerBoxscore.Box.Stats.SkaterStats;
@@ -173,12 +197,13 @@ namespace HockeyData.Processors.NhlCom.Processors
 										PlusMinus = apiSkaterStats.PlusMinus,
 										Position = apiPlayerBoxscore.Box.Position.Abbreviation,
 										Shots = apiSkaterStats.Shots,
-										Takeaways = apiSkaterStats.Takeaways
+										Takeaways = apiSkaterStats.Takeaways,
+										StarNumber = starNumber
 									};
 									dbSkaterBoxscoreDict.Add(dbPlayerId, dbSkaterBoxscore);
 									dbContext.SkaterBoxscores.Add(dbSkaterBoxscore);
 								}
-								else if (HasUpdates(dbSkaterBoxscore, apiSkaterStats))
+								else if (HasUpdates(dbSkaterBoxscore, apiSkaterStats, starNumber))
 								{
 									dbSkaterBoxscore.Assists = apiSkaterStats.Assists;
 									dbSkaterBoxscore.AssistsPP = apiSkaterStats.PowerPlayAssists;
@@ -201,6 +226,7 @@ namespace HockeyData.Processors.NhlCom.Processors
 									dbSkaterBoxscore.PlusMinus = apiSkaterStats.PlusMinus;
 									dbSkaterBoxscore.Shots = apiSkaterStats.Shots;
 									dbSkaterBoxscore.Takeaways = apiSkaterStats.Takeaways;
+									dbSkaterBoxscore.StarNumber = starNumber;
 								}
 							}
 
@@ -240,12 +266,13 @@ namespace HockeyData.Processors.NhlCom.Processors
 										ShotsEV = apiGoalieStats.EvenShotsAgainst,
 										ShotsPP = apiGoalieStats.PowerPlayShotsAgainst,
 										ShotsSH = apiGoalieStats.ShortHandedShotsAgainst,
-										TimeOnIce = ConvertTimeStringToSeconds(apiGoalieStats.TimeOnIce)
+										TimeOnIce = ConvertTimeStringToSeconds(apiGoalieStats.TimeOnIce),
+										StarNumber = starNumber
 									};
 									dbGoalieBoxscoreDict.Add(dbPlayerId, dbGoalieBoxscore);
 									dbContext.GoalieBoxscores.Add(dbGoalieBoxscore);
 								}
-								else if (HasUpdates(dbGoalieBoxscore, apiGoalieStats))
+								else if (HasUpdates(dbGoalieBoxscore, apiGoalieStats, starNumber))
 								{
 									dbGoalieBoxscore.AssistsScored = apiGoalieStats.Assists;
 									dbGoalieBoxscore.Decision = string.IsNullOrEmpty(apiGoalieStats.Decision) ? null : apiGoalieStats.Decision;
@@ -265,6 +292,7 @@ namespace HockeyData.Processors.NhlCom.Processors
 									dbGoalieBoxscore.ShotsPP = apiGoalieStats.PowerPlayShotsAgainst;
 									dbGoalieBoxscore.ShotsSH = apiGoalieStats.ShortHandedShotsAgainst;
 									dbGoalieBoxscore.TimeOnIce = ConvertTimeStringToSeconds(apiGoalieStats.TimeOnIce);
+									dbGoalieBoxscore.StarNumber = starNumber;
 								}
 							}
 						}
@@ -275,30 +303,31 @@ namespace HockeyData.Processors.NhlCom.Processors
 			}
 		}
 
-		private bool HasUpdates(SkaterBoxscore dbBoxscore, Feeds.GameLiveFeed.ApiSkaterStats apiBoxscore)
+		private bool HasUpdates(SkaterBoxscore dbBoxscore, Feeds.GameLiveFeed.ApiSkaterStats apiBoxscore, int? starNumber)
 		{
 			return dbBoxscore.IceTimeTotal != ConvertTimeStringToSeconds(apiBoxscore.TimeOnIce)
-				|| dbBoxscore.Shots != apiBoxscore.Shots
-				|| dbBoxscore.Giveaways != apiBoxscore.Giveaways
-				|| dbBoxscore.Takeaways != apiBoxscore.Takeaways
-				|| dbBoxscore.OppShotsBlocked != apiBoxscore.Blocked
-				|| dbBoxscore.Hits != apiBoxscore.Hits
-				|| dbBoxscore.PenaltyMinutes != apiBoxscore.PenaltyMinutes
-				|| dbBoxscore.PlusMinus != apiBoxscore.PlusMinus
-				|| dbBoxscore.Assists != apiBoxscore.Assists
-				|| dbBoxscore.Goals != apiBoxscore.Goals
-				|| dbBoxscore.FaceoffsTaken != apiBoxscore.FaceoffTaken
-				|| dbBoxscore.FaceoffsWon != apiBoxscore.FaceOffWins
-				|| dbBoxscore.IceTimeEV != ConvertTimeStringToSeconds(apiBoxscore.EvenTimeOnIce)
-				|| dbBoxscore.AssistsPP != apiBoxscore.PowerPlayAssists
-				|| dbBoxscore.AssistsSH != apiBoxscore.ShortHandedAssists
-				|| dbBoxscore.GoalsPP != apiBoxscore.PowerPlayGoals
-				|| dbBoxscore.GoalsSH != apiBoxscore.ShortHandedGoals
-				|| dbBoxscore.IceTimePP != ConvertTimeStringToSeconds(apiBoxscore.PowerPlayTimeOnIce)
-				|| dbBoxscore.IceTimeSH != ConvertTimeStringToSeconds(apiBoxscore.ShortHandedTimeOnIce);
+					|| dbBoxscore.Shots != apiBoxscore.Shots
+					|| dbBoxscore.Giveaways != apiBoxscore.Giveaways
+					|| dbBoxscore.Takeaways != apiBoxscore.Takeaways
+					|| dbBoxscore.OppShotsBlocked != apiBoxscore.Blocked
+					|| dbBoxscore.Hits != apiBoxscore.Hits
+					|| dbBoxscore.PenaltyMinutes != apiBoxscore.PenaltyMinutes
+					|| dbBoxscore.PlusMinus != apiBoxscore.PlusMinus
+					|| dbBoxscore.Assists != apiBoxscore.Assists
+					|| dbBoxscore.Goals != apiBoxscore.Goals
+					|| dbBoxscore.FaceoffsTaken != apiBoxscore.FaceoffTaken
+					|| dbBoxscore.FaceoffsWon != apiBoxscore.FaceOffWins
+					|| dbBoxscore.IceTimeEV != ConvertTimeStringToSeconds(apiBoxscore.EvenTimeOnIce)
+					|| dbBoxscore.AssistsPP != apiBoxscore.PowerPlayAssists
+					|| dbBoxscore.AssistsSH != apiBoxscore.ShortHandedAssists
+					|| dbBoxscore.GoalsPP != apiBoxscore.PowerPlayGoals
+					|| dbBoxscore.GoalsSH != apiBoxscore.ShortHandedGoals
+					|| dbBoxscore.IceTimePP != ConvertTimeStringToSeconds(apiBoxscore.PowerPlayTimeOnIce)
+					|| dbBoxscore.IceTimeSH != ConvertTimeStringToSeconds(apiBoxscore.ShortHandedTimeOnIce)
+					|| dbBoxscore.StarNumber != starNumber;
 		}
 
-		private bool HasUpdates(GoalieBoxscore dbBoxscore, Feeds.GameLiveFeed.ApiGoalieStats apiBoxscore)
+		private bool HasUpdates(GoalieBoxscore dbBoxscore, Feeds.GameLiveFeed.ApiGoalieStats apiBoxscore, int? starNumber)
 		{
 			return dbBoxscore.AssistsScored != apiBoxscore.Assists
 					|| dbBoxscore.Decision != (string.IsNullOrEmpty(apiBoxscore.Decision) ? null : apiBoxscore.Decision)
@@ -313,7 +342,8 @@ namespace HockeyData.Processors.NhlCom.Processors
 					|| dbBoxscore.ShotsEV != apiBoxscore.EvenShotsAgainst
 					|| dbBoxscore.ShotsPP != apiBoxscore.PowerPlayShotsAgainst
 					|| dbBoxscore.ShotsSH != apiBoxscore.ShortHandedShotsAgainst
-					|| dbBoxscore.TimeOnIce != ConvertTimeStringToSeconds(apiBoxscore.TimeOnIce);
+					|| dbBoxscore.TimeOnIce != ConvertTimeStringToSeconds(apiBoxscore.TimeOnIce)
+					|| dbBoxscore.StarNumber != starNumber;
 		}
 
 		private static int? ConvertHeightStringToInches(string height)

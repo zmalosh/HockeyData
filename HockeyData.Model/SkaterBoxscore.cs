@@ -32,6 +32,7 @@ namespace HockeyData.Model
 		public int? IceTimeEV { get; set; }
 		public int? IceTimePP { get; set; }
 		public int? IceTimeSH { get; set; }
+		public int? StarNumber { get; set; }
 		public DateTime DateLastModifiedUtc { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
 

@@ -27,6 +27,7 @@ namespace HockeyData.Model
 		public int? GoalsAllowedSH { get; set; }
 		public int? GoalsScored { get; set; }
 		public int? AssistsScored { get; set; }
+		public int? StarNumber { get; set; }
 		public DateTime DateLastModifiedUtc { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
 
