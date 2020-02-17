@@ -26,10 +26,18 @@ namespace HockeyData.Model
 			optionsBuilder.UseSqlServer(connectionString);
 		}
 
+		public DbSet<League> Leagues { get; set; }
 		public DbSet<Team> Teams { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			modelBuilder.Entity<League>(e =>
+			{
+				e.HasKey(x => x.LeagueId);
+				e.Property(x => x.LeagueName).HasMaxLength(64);
+				e.Property(x => x.LeagueAbbr).HasMaxLength(8);
+			});
+
 			modelBuilder.Entity<Team>(e =>
 			{
 				e.HasKey(x => x.TeamId);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HockeyData.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,6 +10,18 @@ namespace HockeyData.Program.Tasks
 		public override void Run()
 		{
 			Console.WriteLine("Hello World!");
+
+			var config = GetConfig();
+
+			using (var context = new HockeyDataContext(config))
+			{
+				context.Database.EnsureDeleted();
+				context.Database.EnsureCreated();
+				context.SaveChanges();
+
+				context.Leagues.Add(new League { LeagueName = "National Hockey League", LeagueAbbr = "NHL" });
+				context.SaveChanges();
+			}
 		}
 	}
 }
