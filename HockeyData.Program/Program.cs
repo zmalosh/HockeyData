@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommandLine;
+using System;
 
 namespace HockeyData.Program
 {
@@ -6,7 +7,21 @@ namespace HockeyData.Program
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
+			BaseTask task = null;
+
+			Parser.Default.ParseArguments<CommandLineOptions>(args)
+				.WithParsed(o =>
+				{
+					if (o.InitializeFullLoadTask)
+					{
+						task = new Tasks.InitializeFullLoadTask();
+					}
+				});
+
+			if (task != null)
+			{
+				task.Run();
+			}
 		}
 	}
 }
