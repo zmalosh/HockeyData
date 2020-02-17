@@ -27,6 +27,7 @@ namespace HockeyData.Model
 		}
 
 		public DbSet<League> Leagues { get; set; }
+		public DbSet<Season> Seasons { get; set; }
 		public DbSet<Team> Teams { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,15 +39,22 @@ namespace HockeyData.Model
 				e.Property(x => x.LeagueAbbr).HasMaxLength(8);
 			});
 
+			modelBuilder.Entity<Season>(e =>
+			{
+				e.HasKey(x => x.SeasonId);
+				e.HasOne(x => x.League).WithMany(y => y.Seasons).HasForeignKey(x => x.LeagueId);
+				e.Property(x => x.NhlSeasonKey).HasMaxLength(8);
+			});
+
 			modelBuilder.Entity<Team>(e =>
 			{
 				e.HasKey(x => x.TeamId);
 				e.Property(x => x.TeamFullName).HasMaxLength(64);
-				e.Property(x => x.TeamLocation).HasMaxLength(32);
-				e.Property(x => x.TeamName).HasMaxLength(32);
-				e.Property(x => x.TeamShortName).HasMaxLength(32);
-				e.Property(x => x.TeamAlias).HasMaxLength(4);
-				e.Property(x => x.WebSiteUrl).HasMaxLength(255);
+				e.Property(x => x.TeamLocation).HasMaxLength(32).IsRequired(false);
+				e.Property(x => x.TeamName).HasMaxLength(32).IsRequired(false);
+				e.Property(x => x.TeamShortName).HasMaxLength(32).IsRequired(false);
+				e.Property(x => x.TeamAlias).HasMaxLength(4).IsRequired(false);
+				e.Property(x => x.WebSiteUrl).HasMaxLength(255).IsRequired(false);
 			});
 		}
 
