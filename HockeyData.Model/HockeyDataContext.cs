@@ -33,6 +33,7 @@ namespace HockeyData.Model
 		public DbSet<Team> Teams { get; set; }
 		public DbSet<Player> Players { get; set; }
 		public DbSet<Game> Games { get; set; }
+		public DbSet<SkaterBoxscore> SkaterBoxscores { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -107,6 +108,15 @@ namespace HockeyData.Model
 				e.HasOne(x => x.AwayTeam).WithMany(y => y.AwayGames).HasForeignKey(x => x.AwayTeamId).IsRequired(false);
 				e.Property(x => x.GameDateEst).HasColumnType("date");
 				e.Property(x => x.GameTimeUtc).HasColumnType("datetime");
+			});
+
+			modelBuilder.Entity<SkaterBoxscore>(e =>
+			{
+				e.HasKey(x => new { x.GameId, x.PlayerId });
+				e.HasOne(x => x.Game).WithMany(y => y.PlayerBoxscores).HasForeignKey(x => x.GameId);
+				e.HasOne(x => x.Player).WithMany(y => y.PlayerBoxscores).HasForeignKey(x => x.PlayerId);
+				e.HasOne(x => x.Team).WithMany(y => y.PlayerBoxscores).HasForeignKey(x => x.TeamId);
+				e.Property(x => x.Position).HasMaxLength(2).IsRequired(false);
 			});
 		}
 

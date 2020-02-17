@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HockeyData.Model
 {
-	public class Game
+	public class Game : IEntity
 	{
 		public int GameId { get; set; }
 		public int SeasonId { get; set; }
@@ -30,9 +30,12 @@ namespace HockeyData.Model
 		public DateTime GameTimeUtc { get; set; }
 		public DetailedGameStatus DetailedGameStatusId { get; set; }
 		public string VenueName { get; set; }
+		public DateTime DateLastModifiedUtc { get; set; }
+		public DateTime DateCreatedUtc { get; set; }
 
 		public virtual Season Season { get; set; }
 		public virtual Team HomeTeam { get; set; }
 		public virtual Team AwayTeam { get; set; }
+		public virtual IList<SkaterBoxscore> PlayerBoxscores { get; set; }
 	}
 }

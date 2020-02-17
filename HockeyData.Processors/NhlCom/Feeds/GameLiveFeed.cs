@@ -18,7 +18,7 @@ namespace HockeyData.Processors.NhlCom.Feeds
 		public string Copyright { get; set; }
 
 		[JsonProperty("gamePk")]
-		public long GamePk { get; set; }
+		public int GamePk { get; set; }
 
 		[JsonProperty("link")]
 		public string Link { get; set; }
@@ -444,7 +444,7 @@ namespace HockeyData.Processors.NhlCom.Feeds
 			public ApiSimplePlayer Person { get; set; }
 
 			[JsonProperty("jerseyNumber")]
-			public int JerseyNumber { get; set; }
+			public int? JerseyNumber { get; set; }
 
 			[JsonProperty("position")]
 			public ApiPosition Position { get; set; }

@@ -24,5 +24,7 @@ namespace HockeyData.Model
 		public int NhlPlayerId { get; set; }
 		public DateTime DateLastModifiedUtc { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
+
+		public IList<SkaterBoxscore> PlayerBoxscores { get; set; }
 	}
 }

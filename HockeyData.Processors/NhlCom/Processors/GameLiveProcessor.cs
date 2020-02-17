@@ -91,13 +91,129 @@ namespace HockeyData.Processors.NhlCom.Processors
 					}
 				}
 				dbContext.SaveChanges();
-
 				playersDict = dbContext.Players.Where(x => nhlGamePlayerIds.Contains(x.NhlPlayerId)).ToDictionary(x => x.NhlPlayerId, y => y);
 
 				int dbGameId = dbGame.GameId;
 				int dbHomeTeamId = dbGame.HomeTeamId.Value;
 				int dbAwayTeamId = dbGame.AwayTeamId.Value;
+
+				if (feed.LiveData.Boxscore?.Teams?.Away?.Players != null && feed.LiveData.Boxscore.Teams.Home.Players != null)
+				{
+					var dbSkaterBoxscoreDict = dbContext.SkaterBoxscores.Where(x => x.GameId == dbGameId).ToDictionary(x => x.PlayerId, y => y);
+					var apiPlayerBoxscores = feed.LiveData.Boxscore.Teams.Away.Players.Select(x => new { DbTeamId = dbAwayTeamId, Box = x.Value }).ToList();
+					apiPlayerBoxscores.AddRange(feed.LiveData.Boxscore.Teams.Home.Players.Select(x => new { DbTeamId = dbHomeTeamId, Box = x.Value }));
+
+					foreach (var apiPlayerBoxscore in apiPlayerBoxscores)
+					{
+						var dbPlayer = playersDict[apiPlayerBoxscore.Box.Person.Id];
+						int dbPlayerId = dbPlayer.PlayerId;
+						if (apiPlayerBoxscore.Box?.Stats?.SkaterStats != null)
+						{
+							var apiSkaterStats = apiPlayerBoxscore.Box.Stats.SkaterStats;
+							if (!dbSkaterBoxscoreDict.TryGetValue(dbPlayerId, out SkaterBoxscore dbSkaterBoxscore))
+							{
+								dbSkaterBoxscore = new SkaterBoxscore
+								{
+									GameId = dbGameId,
+									PlayerId = dbPlayerId,
+									TeamId = apiPlayerBoxscore.DbTeamId,
+									Assists = apiSkaterStats.Assists,
+									AssistsPP = apiSkaterStats.PowerPlayAssists,
+									AssistsSH = apiSkaterStats.ShortHandedAssists,
+									FaceoffsTaken = apiSkaterStats.FaceoffTaken,
+									FaceoffsWon = apiSkaterStats.FaceOffWins,
+									Giveaways = apiSkaterStats.Giveaways,
+									Goals = apiSkaterStats.Goals,
+									GoalsPP = apiSkaterStats.PowerPlayGoals,
+									GoalsSH = apiSkaterStats.ShortHandedGoals,
+									Hits = apiSkaterStats.Hits,
+									IceTimeEV = ConvertTimeStringToSeconds(apiSkaterStats.EvenTimeOnIce),
+									IceTimePP = ConvertTimeStringToSeconds(apiSkaterStats.PowerPlayTimeOnIce),
+									IceTimeSH = ConvertTimeStringToSeconds(apiSkaterStats.ShortHandedTimeOnIce),
+									IceTimeTotal = ConvertTimeStringToSeconds(apiSkaterStats.TimeOnIce),
+									JerseyNumber = apiPlayerBoxscore.Box.JerseyNumber,
+									OppShotsBlocked = apiSkaterStats.Blocked,
+									PenaltyMinutes = apiSkaterStats.PenaltyMinutes,
+									PlusMinus = apiSkaterStats.PlusMinus,
+									Position = apiPlayerBoxscore.Box.Position.Abbreviation,
+									Shots = apiSkaterStats.Shots,
+									Takeaways = apiSkaterStats.Takeaways
+								};
+								dbSkaterBoxscoreDict.Add(dbPlayerId, dbSkaterBoxscore);
+								dbContext.SkaterBoxscores.Add(dbSkaterBoxscore);
+							}
+							else if (HasUpdates(dbSkaterBoxscore, apiSkaterStats))
+							{
+								dbSkaterBoxscore.Assists = apiSkaterStats.Assists;
+								dbSkaterBoxscore.AssistsPP = apiSkaterStats.PowerPlayAssists;
+								dbSkaterBoxscore.AssistsSH = apiSkaterStats.ShortHandedAssists;
+								dbSkaterBoxscore.FaceoffsTaken = apiSkaterStats.FaceoffTaken;
+								dbSkaterBoxscore.FaceoffsWon = apiSkaterStats.FaceOffWins;
+								dbSkaterBoxscore.Giveaways = apiSkaterStats.Giveaways;
+								dbSkaterBoxscore.Goals = apiSkaterStats.Goals;
+								dbSkaterBoxscore.GoalsPP = apiSkaterStats.PowerPlayGoals;
+								dbSkaterBoxscore.GoalsSH = apiSkaterStats.ShortHandedGoals;
+								dbSkaterBoxscore.Hits = apiSkaterStats.Hits;
+								dbSkaterBoxscore.IceTimeEV = ConvertTimeStringToSeconds(apiSkaterStats.EvenTimeOnIce);
+								dbSkaterBoxscore.IceTimePP = ConvertTimeStringToSeconds(apiSkaterStats.PowerPlayTimeOnIce);
+								dbSkaterBoxscore.IceTimeSH = ConvertTimeStringToSeconds(apiSkaterStats.ShortHandedTimeOnIce);
+								dbSkaterBoxscore.IceTimeTotal = ConvertTimeStringToSeconds(apiSkaterStats.TimeOnIce);
+								dbSkaterBoxscore.OppShotsBlocked = apiSkaterStats.Blocked;
+								dbSkaterBoxscore.PenaltyMinutes = apiSkaterStats.PenaltyMinutes;
+								dbSkaterBoxscore.PlusMinus = apiSkaterStats.PlusMinus;
+								dbSkaterBoxscore.Shots = apiSkaterStats.Shots;
+								dbSkaterBoxscore.Takeaways = apiSkaterStats.Takeaways;
+							}
+						}
+					}
+					dbContext.SaveChanges();
+				}
 			}
+		}
+
+		private bool HasUpdates(SkaterBoxscore dbBoxscore, Feeds.GameLiveFeed.ApiSkaterStats apiBoxscore)
+		{
+			return dbBoxscore.Assists != apiBoxscore.Assists
+			|| dbBoxscore.AssistsPP != apiBoxscore.PowerPlayAssists
+			|| dbBoxscore.AssistsSH != apiBoxscore.ShortHandedAssists
+			|| dbBoxscore.FaceoffsTaken != apiBoxscore.FaceoffTaken
+			|| dbBoxscore.FaceoffsWon != apiBoxscore.FaceOffWins
+			|| dbBoxscore.Giveaways != apiBoxscore.Giveaways
+			|| dbBoxscore.Goals != apiBoxscore.Goals
+			|| dbBoxscore.GoalsPP != apiBoxscore.PowerPlayGoals
+			|| dbBoxscore.GoalsSH != apiBoxscore.ShortHandedGoals
+			|| dbBoxscore.Hits != apiBoxscore.Hits
+			|| dbBoxscore.IceTimeEV != ConvertTimeStringToSeconds(apiBoxscore.EvenTimeOnIce)
+			|| dbBoxscore.IceTimePP != ConvertTimeStringToSeconds(apiBoxscore.PowerPlayTimeOnIce)
+			|| dbBoxscore.IceTimeSH != ConvertTimeStringToSeconds(apiBoxscore.ShortHandedTimeOnIce)
+			|| dbBoxscore.IceTimeTotal != ConvertTimeStringToSeconds(apiBoxscore.TimeOnIce)
+			|| dbBoxscore.OppShotsBlocked != apiBoxscore.Blocked
+			|| dbBoxscore.PenaltyMinutes != apiBoxscore.PenaltyMinutes
+			|| dbBoxscore.PlusMinus != apiBoxscore.PlusMinus
+			|| dbBoxscore.Shots != apiBoxscore.Shots
+			|| dbBoxscore.Takeaways != apiBoxscore.Takeaways;
+		}
+
+		private static int? ConvertHeightStringToInches(string height)
+		{
+			if (string.IsNullOrEmpty(height) || !height.Contains('\''))
+			{
+				return null;
+			}
+			var arrHeight = height.Replace("\"", "").Split('\'');
+			int? result = (int.Parse(arrHeight[0]) * 12) + int.Parse(arrHeight[1]);
+			return result;
+		}
+
+		private static int? ConvertTimeStringToSeconds(string time)
+		{
+			if (string.IsNullOrEmpty(time) || !time.Contains(':'))
+			{
+				return null;
+			}
+			var arrTime = time.Split(':');
+			int? result = (int.Parse(arrTime[0]) * 60) + int.Parse(arrTime[1]);
+			return result;
 		}
 	}
 }
