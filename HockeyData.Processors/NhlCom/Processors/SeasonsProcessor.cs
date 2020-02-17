@@ -34,9 +34,9 @@ namespace HockeyData.Processors.NhlCom.Processors
 					};
 					seasonsDict.Add(dbSeason.NhlSeasonKey, dbSeason);
 					dbContext.Seasons.Add(dbSeason);
+					dbContext.SaveChanges();
 				}
 			}
-			dbContext.SaveChanges();
 		}
 	}
 }

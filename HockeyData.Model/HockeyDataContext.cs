@@ -22,7 +22,7 @@ namespace HockeyData.Model
 			//	.SetBasePath(Directory.GetCurrentDirectory())
 			//	.AddJsonFile("appsettings.json")
 			//	.Build();
-			var connectionString = this.config["BasketballDataContextConnectionString"];
+			var connectionString = this.config["HockeyDataContextConnectionString"];
 			optionsBuilder.UseSqlServer(connectionString);
 		}
 

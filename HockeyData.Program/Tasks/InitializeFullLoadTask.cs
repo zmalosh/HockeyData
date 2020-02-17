@@ -1,4 +1,5 @@
 ﻿using HockeyData.Model;
+using HockeyData.Processors.NhlCom.Processors;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,6 +22,9 @@ namespace HockeyData.Program.Tasks
 
 				context.Leagues.Add(new League { LeagueName = "National Hockey League", LeagueAbbr = "NHL" });
 				context.SaveChanges();
+
+				var seasonsProcessor = new SeasonsProcessor();
+				seasonsProcessor.Run(context);
 			}
 		}
 	}
