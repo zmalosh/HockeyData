@@ -37,7 +37,10 @@ namespace HockeyData.Processors.NhlCom.Processors
 						TeamLocation = apiTeam.LocationName,
 						TeamName = apiTeam.TeamName,
 						TeamShortName = apiTeam.ShortName,
-						WebSiteUrl = apiTeam.OfficialSiteUrl
+						WebSiteUrl = apiTeam.OfficialSiteUrl,
+						TimeZoneAbbr = apiTeam.Venue?.TimeZone?.TimeZoneAbbr,
+						TimeZoneName = apiTeam.Venue?.TimeZone?.TimeZoneName,
+						TimeZoneOffset = apiTeam.Venue?.TimeZone?.Offset,
 					};
 					teamsDict.Add(apiTeam.Id, dbTeam);
 					dbContext.Teams.Add(dbTeam);

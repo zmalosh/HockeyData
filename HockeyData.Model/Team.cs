@@ -15,6 +15,9 @@ namespace HockeyData.Model
 		public int NhlTeamId { get; set; }
 		public int? FirstYearOfPlay { get; set; }
 		public string WebSiteUrl { get; set; }
+		public string TimeZoneAbbr { get; set; }
+		public string TimeZoneName { get; set; }
+		public int? TimeZoneOffset { get; set; }
 		public DateTime DateLastModifiedUtc { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
 	}
