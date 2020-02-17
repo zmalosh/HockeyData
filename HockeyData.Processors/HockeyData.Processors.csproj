@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="NhlCom\Feeds\" />
     <Folder Include="NhlCom\Processors\" />
   </ItemGroup>
 
