@@ -18,5 +18,6 @@ namespace HockeyData.Model
 		public DateTime DateCreatedUtc { get; set; }
 
 		public virtual League League { get; set; }
+		public virtual IList<Game> Games { get; set; }
 	}
 }

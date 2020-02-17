@@ -85,6 +85,7 @@ namespace HockeyData.Model
 			modelBuilder.Entity<Game>(e =>
 			{
 				e.HasKey(x => x.GameId);
+				e.HasOne(x => x.Season).WithMany(y => y.Games).HasForeignKey(x => x.SeasonId);
 				e.HasOne(x => x.HomeTeam).WithMany(y => y.HomeGames).HasForeignKey(x => x.HomeTeamId).IsRequired(false);
 				e.HasOne(x => x.AwayTeam).WithMany(y => y.AwayGames).HasForeignKey(x => x.AwayTeamId).IsRequired(false);
 				e.Property(x => x.GameDateEst).HasColumnType("date");

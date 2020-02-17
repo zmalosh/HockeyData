@@ -7,6 +7,7 @@ namespace HockeyData.Model
 	public class Game
 	{
 		public int GameId { get; set; }
+		public int SeasonId { get; set; }
 		public int? HomeTeamId { get; set; }
 		public int? AwayTeamId { get; set; }
 		public GameType GameTypeId { get; set; }
@@ -28,6 +29,7 @@ namespace HockeyData.Model
 		public DetailedGameStatus DetailedGameStatusId { get; set; }
 		public string VenueName { get; set; }
 
+		public virtual Season Season { get; set; }
 		public virtual Team HomeTeam { get; set; }
 		public virtual Team AwayTeam { get; set; }
 	}
