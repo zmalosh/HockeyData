@@ -35,6 +35,7 @@ namespace HockeyData.Model
 		public DbSet<Team> Teams { get; set; }
 		public DbSet<Player> Players { get; set; }
 		public DbSet<Game> Games { get; set; }
+		public DbSet<GamePlay> GamePlays { get; set; }
 		public DbSet<SkaterBoxscore> SkaterBoxscores { get; set; }
 		public DbSet<GoalieBoxscore> GoalieBoxscores { get; set; }
 		public DbSet<TeamBoxscore> TeamBoxscores { get; set; }
@@ -136,6 +137,28 @@ namespace HockeyData.Model
 				e.Property(x => x.GameTimeUtc).HasColumnType("datetime");
 				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
 				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
+			});
+
+			modelBuilder.Entity<GamePlay>(e =>
+			{
+				e.HasKey(x => x.GamePlayId);
+				e.HasOne(x => x.Game).WithMany(y => y.GamePlays).HasForeignKey(x => x.GameId).IsRequired(true);
+				e.HasOne(x => x.Team).WithMany(y => y.GamePlays).HasForeignKey(x => x.TeamId).IsRequired(false);
+				e.HasOne(x => x.OppTeam).WithMany(y => y.OppGamePlays).HasForeignKey(x => x.OppTeamId).IsRequired(false);
+				e.HasOne(x => x.Player).WithMany(y => y.GamePlays).HasForeignKey(x => x.PlayerId).IsRequired(false);
+				e.HasOne(x => x.OppPlayer).WithMany(y => y.OppGamePlays).HasForeignKey(x => x.OppPlayerId).IsRequired(false);
+				e.HasOne(x => x.Assist1Player).WithMany(y => y.Assist1Plays).HasForeignKey(x => x.Assist1PlayerId).IsRequired(false);
+				e.HasOne(x => x.Assist2Player).WithMany(y => y.Assist2Plays).HasForeignKey(x => x.Assist2PlayerId).IsRequired(false);
+				e.Property(x => x.XCoord).HasColumnType("decimal(4,1)").IsRequired(false);
+				e.Property(x => x.YCoord).HasColumnType("decimal(4,1)").IsRequired(false);
+				e.Property(x => x.NhlXCoord).HasColumnType("decimal(4,1)").IsRequired(false);
+				e.Property(x => x.NhlYCoord).HasColumnType("decimal(4,1)").IsRequired(false);
+				e.Property(x => x.NhlEventCode).HasMaxLength(8);
+				e.Property(x => x.PlayDesc).HasMaxLength(1024).IsRequired(false);
+				e.Property(x => x.PenaltyName).HasMaxLength(64).IsRequired(false);
+				e.Property(x => x.PenaltySeverity).HasMaxLength(512).IsRequired(false);
+				e.Property(x => x.StrengthType).HasMaxLength(32).IsRequired(false);
+				e.Property(x => x.ShotType).HasMaxLength(32).IsRequired(false);
 			});
 
 			modelBuilder.Entity<SkaterBoxscore>(e =>

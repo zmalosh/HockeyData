@@ -45,5 +45,6 @@ namespace HockeyData.Model
 		public virtual IList<SkaterBoxscore> PlayerBoxscores { get; set; }
 		public virtual IList<GoalieBoxscore> GoalieBoxscores { get; set; }
 		public virtual IList<TeamBoxscore> TeamBoxscores { get; set; }
+		public virtual IList<GamePlay> GamePlays { get; set; }
 	}
 }

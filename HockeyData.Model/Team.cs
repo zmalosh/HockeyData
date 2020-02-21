@@ -27,5 +27,7 @@ namespace HockeyData.Model
 		public IList<GoalieBoxscore> GoalieBoxscores { get; set; }
 		public IList<TeamBoxscore> TeamBoxscores { get; set; }
 		public IList<TeamBoxscore> OppTeamBoxscores { get; set; }
+		public IList<GamePlay> GamePlays { get; set; }
+		public IList<GamePlay> OppGamePlays { get; set; }
 	}
 }
