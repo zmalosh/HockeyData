@@ -75,6 +75,21 @@ namespace HockeyData.Program.Tasks
 				//});
 				//context.SaveChanges();
 
+				context.RefStoppageTypes.AddRange(new List<RefStoppageType>
+				{
+					new RefStoppageType{ StoppageTypeId = StoppageType.Unknown, NhlDescription = null , StoppageName = null},
+					new RefStoppageType{ StoppageTypeId = StoppageType.GoalieStopped, NhlDescription = "Goalie Stopped", StoppageName = "Goalie Stopped"},
+					new RefStoppageType{ StoppageTypeId = StoppageType.Icing, NhlDescription = "Icing", StoppageName = "Icing"},
+					new RefStoppageType{ StoppageTypeId = StoppageType.NetOff, NhlDescription = "Net Off", StoppageName = "Net Off"},
+					new RefStoppageType{ StoppageTypeId = StoppageType.Offside, NhlDescription = "Offside", StoppageName = "Offside"},
+					new RefStoppageType{ StoppageTypeId = StoppageType.PuckFrozen, NhlDescription = "Puck Frozen", StoppageName = "Puck Frozen"},
+					new RefStoppageType{ StoppageTypeId = StoppageType.PuckInBenches, NhlDescription = "Puck In Benches", StoppageName = "Puck in Benches"},
+					new RefStoppageType{ StoppageTypeId = StoppageType.PuckInCrowd, NhlDescription = "Puck In Crowd", StoppageName = "Puck in Crowd"},
+					new RefStoppageType{ StoppageTypeId = StoppageType.PuckInNetting, NhlDescription = "Puck In Netting", StoppageName = "Puck in Netting"},
+					new RefStoppageType{ StoppageTypeId = StoppageType.TVTimeout, NhlDescription = "TV Timeout", StoppageName = "TV timeout"},
+				});
+				context.SaveChanges();
+
 				//context.Leagues.Add(new League { LeagueName = "National Hockey League", LeagueAbbr = "NHL" });
 				//context.SaveChanges();
 
