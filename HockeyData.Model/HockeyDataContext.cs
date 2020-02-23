@@ -63,7 +63,7 @@ namespace HockeyData.Model
 				e.HasKey(x => x.PlayTypeId);
 				e.Property(x => x.PlayTypeId).ValueGeneratedNever();
 				e.Property(x => x.PlayTypeName).HasMaxLength(32);
-				e.Property(x => x.NhlCode).HasMaxLength(32);
+				e.Property(x => x.NhlCode).HasMaxLength(32).IsRequired(false);
 			});
 
 			modelBuilder.Entity<RefStoppageType>(e =>
@@ -71,7 +71,7 @@ namespace HockeyData.Model
 				e.HasKey(x => x.StoppageTypeId);
 				e.Property(x => x.StoppageTypeId).ValueGeneratedNever();
 				e.Property(x => x.StoppageName).HasMaxLength(32);
-				e.Property(x => x.NhlDescription).HasMaxLength(32);
+				e.Property(x => x.NhlDescription).HasMaxLength(32).IsRequired(false);
 			});
 
 			modelBuilder.Entity<League>(e =>
@@ -108,14 +108,15 @@ namespace HockeyData.Model
 			modelBuilder.Entity<Player>(e =>
 			{
 				e.HasKey(x => x.PlayerId);
-				e.Property(x => x.BirthCity).HasMaxLength(128);
-				e.Property(x => x.BirthCountry).HasMaxLength(3);
+				e.Property(x => x.BirthCity).HasMaxLength(128).IsRequired(false);
+				e.Property(x => x.BirthCountry).HasMaxLength(3).IsRequired(false);
 				e.Property(x => x.BirthState).HasMaxLength(2).IsRequired(false);
-				e.Property(x => x.FirstName).HasMaxLength(64);
+				e.Property(x => x.FirstName).HasMaxLength(64).IsRequired(false);
 				e.Property(x => x.FullName).HasMaxLength(128);
-				e.Property(x => x.LastName).HasMaxLength(64);
-				e.Property(x => x.Nationality).HasMaxLength(3);
+				e.Property(x => x.LastName).HasMaxLength(64).IsRequired(false);
+				e.Property(x => x.Nationality).HasMaxLength(3).IsRequired(false);
 				e.Property(x => x.PrimaryPosition).HasMaxLength(3).IsRequired(false);
+				e.Property(x => x.Handedness).HasMaxLength(1).IsRequired(false);
 				e.Property(x => x.BirthDate).HasColumnType("date");
 				e.Property(x => x.DateCreatedUtc).HasColumnType("datetime");
 				e.Property(x => x.DateLastModifiedUtc).HasColumnType("datetime");
@@ -141,7 +142,9 @@ namespace HockeyData.Model
 
 			modelBuilder.Entity<GamePlay>(e =>
 			{
-				e.HasKey(x => x.GamePlayId);
+				e.HasKey(x => new { x.GameId, x.PlaySeq });
+				e.Property(x => x.GameId).ValueGeneratedNever();
+				e.Property(x => x.PlaySeq).ValueGeneratedNever();
 				e.HasOne(x => x.Game).WithMany(y => y.GamePlays).HasForeignKey(x => x.GameId).IsRequired(true);
 				e.HasOne(x => x.Team).WithMany(y => y.GamePlays).HasForeignKey(x => x.TeamId).IsRequired(false);
 				e.HasOne(x => x.OppTeam).WithMany(y => y.OppGamePlays).HasForeignKey(x => x.OppTeamId).IsRequired(false);
@@ -153,7 +156,8 @@ namespace HockeyData.Model
 				e.Property(x => x.YCoord).HasColumnType("decimal(4,1)").IsRequired(false);
 				e.Property(x => x.NhlXCoord).HasColumnType("decimal(4,1)").IsRequired(false);
 				e.Property(x => x.NhlYCoord).HasColumnType("decimal(4,1)").IsRequired(false);
-				e.Property(x => x.NhlEventCode).HasMaxLength(8);
+				e.Property(x => x.NhlEventCode).HasMaxLength(16);
+				e.Property(x => x.PeriodDisp).HasMaxLength(4);
 				e.Property(x => x.PlayDesc).HasMaxLength(1024).IsRequired(false);
 				e.Property(x => x.PenaltyName).HasMaxLength(64).IsRequired(false);
 				e.Property(x => x.PenaltySeverity).HasMaxLength(512).IsRequired(false);

@@ -18,7 +18,7 @@ namespace HockeyData.Processors
 		public JsonUtility(int? cacheTimeSeconds = null)
 		{
 			this.CacheTimeSeconds = cacheTimeSeconds;
-			if (!cacheTimeSeconds.HasValue)
+			if (!cacheTimeSeconds.HasValue || cacheTimeSeconds.Value == 0)
 			{
 				this.CacheUtility = new NoCacheUtility();
 			}

@@ -16,7 +16,7 @@ namespace HockeyData.Model
 		public int? Weight { get; set; }
 		public string Nationality { get; set; }
 		public string Handedness { get; set; }
-		public DateTime BirthDate { get; set; }
+		public DateTime? BirthDate { get; set; }
 		public string BirthCountry { get; set; }
 		public string BirthState { get; set; }
 		public string BirthCity { get; set; }

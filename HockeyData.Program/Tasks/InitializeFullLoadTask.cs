@@ -75,28 +75,33 @@ namespace HockeyData.Program.Tasks
 				//});
 				//context.SaveChanges();
 
-				context.RefStoppageTypes.AddRange(new List<RefStoppageType>
-				{
-					new RefStoppageType{ StoppageTypeId = StoppageType.Unknown, NhlDescription = null , StoppageName = null},
-					new RefStoppageType{ StoppageTypeId = StoppageType.GoalieStopped, NhlDescription = "Goalie Stopped", StoppageName = "Goalie Stopped"},
-					new RefStoppageType{ StoppageTypeId = StoppageType.Icing, NhlDescription = "Icing", StoppageName = "Icing"},
-					new RefStoppageType{ StoppageTypeId = StoppageType.NetOff, NhlDescription = "Net Off", StoppageName = "Net Off"},
-					new RefStoppageType{ StoppageTypeId = StoppageType.Offside, NhlDescription = "Offside", StoppageName = "Offside"},
-					new RefStoppageType{ StoppageTypeId = StoppageType.PuckFrozen, NhlDescription = "Puck Frozen", StoppageName = "Puck Frozen"},
-					new RefStoppageType{ StoppageTypeId = StoppageType.PuckInBenches, NhlDescription = "Puck In Benches", StoppageName = "Puck in Benches"},
-					new RefStoppageType{ StoppageTypeId = StoppageType.PuckInCrowd, NhlDescription = "Puck In Crowd", StoppageName = "Puck in Crowd"},
-					new RefStoppageType{ StoppageTypeId = StoppageType.PuckInNetting, NhlDescription = "Puck In Netting", StoppageName = "Puck in Netting"},
-					new RefStoppageType{ StoppageTypeId = StoppageType.TVTimeout, NhlDescription = "TV Timeout", StoppageName = "TV timeout"},
-				});
-				context.SaveChanges();
+				//context.RefStoppageTypes.AddRange(new List<RefStoppageType>
+				//{
+				//	new RefStoppageType{ StoppageTypeId = StoppageType.Unknown, NhlDescription = null , StoppageName = "Unknown"},
+				//	new RefStoppageType{ StoppageTypeId = StoppageType.GoalieStopped, NhlDescription = "Goalie Stopped", StoppageName = "Goalie Stopped"},
+				//	new RefStoppageType{ StoppageTypeId = StoppageType.Icing, NhlDescription = "Icing", StoppageName = "Icing"},
+				//	new RefStoppageType{ StoppageTypeId = StoppageType.NetOff, NhlDescription = "Net Off", StoppageName = "Net Off"},
+				//	new RefStoppageType{ StoppageTypeId = StoppageType.Offside, NhlDescription = "Offside", StoppageName = "Offside"},
+				//	new RefStoppageType{ StoppageTypeId = StoppageType.PuckFrozen, NhlDescription = "Puck Frozen", StoppageName = "Puck Frozen"},
+				//	new RefStoppageType{ StoppageTypeId = StoppageType.PuckInBenches, NhlDescription = "Puck In Benches", StoppageName = "Puck in Benches"},
+				//	new RefStoppageType{ StoppageTypeId = StoppageType.PuckInCrowd, NhlDescription = "Puck In Crowd", StoppageName = "Puck in Crowd"},
+				//	new RefStoppageType{ StoppageTypeId = StoppageType.PuckInNetting, NhlDescription = "Puck In Netting", StoppageName = "Puck in Netting"},
+				//	new RefStoppageType{ StoppageTypeId = StoppageType.TVTimeout, NhlDescription = "TV Timeout", StoppageName = "TV timeout"},
+				//});
+				//context.SaveChanges();
 
 				//context.Leagues.Add(new League { LeagueName = "National Hockey League", LeagueAbbr = "NHL" });
+				//context.SaveChanges();
+
+				//context.Players.Add(new Player { NhlPlayerId = 0, FullName = "Unknown" });
 				//context.SaveChanges();
 
 				var seasonsProcessor = new SeasonsProcessor();
 				seasonsProcessor.Run(context);
 
-				var dbSeasons = context.Seasons.Where(x => x.SeasonId > 100 && x.NhlSeasonKey != "20192020").OrderBy(x => x.SeasonId).ToList();
+				//var dbSeasons = context.Seasons.Where(x => x.SeasonId > 100 && x.NhlSeasonKey != "20192020").OrderBy(x => x.SeasonId).ToList();
+				var dbSeasons = context.Seasons.Where(x => x.NhlSeasonKey == "20192020").OrderBy(x => x.SeasonId).ToList();
+				//var dbSeasons = context.Seasons.OrderBy(x => x.SeasonId).ToList();
 				for (int i = 0; i < dbSeasons.Count; i++)
 				{
 					var dbSeason = dbSeasons[i];
@@ -114,7 +119,7 @@ namespace HockeyData.Program.Tasks
 					{
 						Console.WriteLine($"PROCESS GAMES - {nhlSeasonKey} - BOXES: {j}/{seasonGames.Count}");
 						var seasonGame = seasonGames[j];
-						var gameLiveProcessor = new GameLiveProcessor(seasonGame.NhlGameId);
+						var gameLiveProcessor = new GameLiveProcessor(seasonGame.NhlGameId, seasonGame.GameDateEst);
 						gameLiveProcessor.Run(context);
 
 						if (j % 30 == 29)

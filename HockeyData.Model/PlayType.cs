@@ -6,6 +6,7 @@ namespace HockeyData.Model
 {
 	public enum PlayType
 	{
+		Unknown = 99,
 		GameScheduled = 1,
 		PeriodReady = 2,
 		PeriodStart = 3,

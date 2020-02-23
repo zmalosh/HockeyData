@@ -147,7 +147,7 @@ namespace HockeyData.Processors.NhlCom.Feeds
 		public class ApiSimpleEntity
 		{
 			[JsonProperty("id")]
-			public long Id { get; set; }
+			public int Id { get; set; }
 
 			[JsonProperty("name")]
 			public string Name { get; set; }
@@ -351,7 +351,7 @@ namespace HockeyData.Processors.NhlCom.Feeds
 		public class ApiSimplePerson
 		{
 			[JsonProperty("id")]
-			public int Id { get; set; }
+			public int? Id { get; set; }
 
 			[JsonProperty("fullName")]
 			public string FullName { get; set; }
