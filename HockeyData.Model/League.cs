@@ -9,6 +9,7 @@ namespace HockeyData.Model
 		public int LeagueId { get; set; }
 		public string LeagueName { get; set; }
 		public string LeagueAbbr { get; set; }
+		public int? NhlLeagueId { get; set; }
 		public DateTime DateLastModifiedUtc { get; set; }
 		public DateTime DateCreatedUtc { get; set; }
 
